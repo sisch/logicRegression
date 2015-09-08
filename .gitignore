@@ -33,3 +33,6 @@
 
 # IntelliJ (CLion)
 .idea
+
+# build directory
+build/

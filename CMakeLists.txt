@@ -3,8 +3,8 @@ project(logicRegression)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.c main.h logictree.c logictree.h)
+set(SOURCE_FILES src/main.c include/main.h src/logictree.c include/logictree.h)
 
-include_directories(.)
+include_directories(./include)
 
 add_executable(logicRegression ${SOURCE_FILES})
