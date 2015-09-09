@@ -8,19 +8,21 @@
 
 typedef struct node Node;
 typedef struct logicTree LTree;
-typedef enum nodeType {AND, OR, INDEX, INDEX_COMPLEMENT} nodeType;
+typedef enum nodeType {AND, OR, INDEX, INDEX_COMPLEMENT, ONE} nodeType;
 typedef enum childPosition {LEFT, RIGHT} childPosition;
 struct node {
     nodeType type;
-    Node *leftChild;
-    Node *rightChild;
-    int nodeIndex;
-    int dataIndex;
+    Node *left_child;
+    Node *right_child;
+    Node *parent;
+    int depth;
+    int node_index;
+    int data_index;
 };
 
 struct logicTree {
-    Node *rootNode;
-    int depth;
+    Node *root_node;
+    LTree *next_tree;
 };
 
 // Allowed set of moves to alter a tree
@@ -33,7 +35,7 @@ void delete_leaf(LTree *tree, int index);
 
 // Other tree operations
 LTree *create_new_tree();
-Node *create_node();
+Node *create_node(Node *parent, nodeType type, int data_index, childPosition cp);
 void destroy_tree(LTree *tree);
 void destroy_node(Node *node);
 
