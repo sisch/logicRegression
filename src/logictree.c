@@ -65,8 +65,8 @@ void destroy_node(Node *n){
         if(n->left_child){
             destroy_node(n->left_child);
         }
-        free(n);
     }
+    free(n);
 }
 
 void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_index, nodeType new_child_type){
@@ -89,11 +89,11 @@ void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_
         Node *new_child_right = create_node(cur_node, cur_node->type, cur_node->data_index, RIGHT);
         Node *new_child_left = create_node(cur_node, new_child_type, new_child_index, LEFT);
         uint depth = new_child_right->depth;
-        tree->height = MAX(depth, tree->height);
+        tree->height = MAX(depth+1, tree->height);
         cur_node->data_index = NULL;
         cur_node->type = new_connector;
     }
     else{
-        printf(stderr, "No rootnode available. Create a tree first and pass the correct pointer.");
+        fprintf(stderr, "No rootnode available. Create a tree first and pass the correct pointer.");
     }
 }
