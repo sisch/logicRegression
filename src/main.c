@@ -22,11 +22,11 @@ void testTrees(){
     //list_of_trees->next_tree = create_new_tree();
     split_leaf(list_of_trees,0b1,AND,4,INDEX_COMPLEMENT);
     split_leaf(list_of_trees,0b10,OR,1,INDEX);
-    /*
-    assert(list_of_trees->root_node->type == OR);
-    assert(list_of_trees->root_node->right_child->type == AND);
-    assert(list_of_trees->root_node->left_child->data_index == 1);
-     */
-    print_tree(list_of_trees);
+
+    assert(list_of_trees->root_node->type == AND);
+    assert(list_of_trees->root_node->right_child->type == OR);
+    assert(list_of_trees->root_node->left_child->data_index == 4);
+
+    print_tree(list_of_trees->root_node);
     destroy_tree(list_of_trees);
 }
