@@ -37,6 +37,7 @@ void delete_leaf(LTree *tree, uint index);
 // Other tree operations
 LTree *create_new_tree();
 Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp);
+Node *find_node_by_index(LTree *tree, uint node_index);
 void destroy_tree(LTree *tree);
 void destroy_node(Node *node);
 

@@ -97,3 +97,62 @@ void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_
         fprintf(stderr, "No rootnode available. Create a tree first and pass the correct pointer.");
     }
 }
+
+void alternate_leaf(LTree *tree, uint index, Node *new_node) {
+
+}
+
+void alternate_operator(LTree *tree, uint index, nodeType type) {
+
+}
+
+void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child) {
+
+}
+
+void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {
+
+}
+
+void delete_leaf(LTree *tree, uint index) {
+
+}
+
+int calculate_tree_outcome(LTree *tree, int *data_array, uint max_data_index) {
+    return 0;
+}
+
+int get_tree_depth(LTree *tree) {
+    return 0;
+}
+
+int get_number_of_leaves(LTree *tree) {
+    return 0;
+}
+
+Node* find_node_by_index(LTree *tree, uint node_index){
+
+    if(node_index>>(sizeof(uint)*8) == 1){
+        printf(stderr, "highest bit set on node index. Should not happen.");
+    }
+    else {
+        uint current_bit_mask = 1 << (sizeof(uint)*8);
+        while (node_index & current_bit_mask == 0) {
+            current_bit_mask >>=1;
+        }
+        Node *current_node = tree->root_node;
+        current_bit_mask >>= 1; //root_node is the first set bit
+        while (current_bit_mask > 0){
+            if(node_index & current_bit_mask == 1){
+                current_node = current_node->right_child;
+            }
+            else if(node_index & current_bit_mask == 0){
+                current_node = current_node->left_child;
+            }
+            current_bit_mask >>= 1;
+        }
+        return current_node;
+    }
+    return NULL;
+
+}
