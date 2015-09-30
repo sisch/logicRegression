@@ -115,7 +115,9 @@ void alternate_leaf(LTree *tree, uint index, Node *new_node) {
 }
 
 void alternate_operator(LTree *tree, uint index, nodeType type) {
-
+    //TODO: Check whether current_node is already an operator.
+    Node *current_node = find_node_by_index(tree, index);
+    current_node->type = type;
 }
 
 void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child) {
