@@ -99,7 +99,19 @@ void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_
 }
 
 void alternate_leaf(LTree *tree, uint index, Node *new_node) {
-
+    //TODO: Check whether new_node is of type leaf
+    Node *old_node = find_node_by_index(tree, index);
+    if(old_node->parent->right_child == old_node){
+        old_node->parent->right_child = new_node;
+    }
+    else if(old_node->parent->left_child == old_node){
+        old_node->parent->left_child = new_node;
+    }
+    new_node->right_child = old_node->right_child;
+    new_node->left_child = old_node->left_child;
+    old_node->right_child = NULL;
+    old_node->left_child = NULL;
+    destroy_node(old_node);
 }
 
 void alternate_operator(LTree *tree, uint index, nodeType type) {
