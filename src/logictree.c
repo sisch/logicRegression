@@ -38,6 +38,7 @@ Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp
     n->right_child = NULL;
     n->type = type;
     n->parent = parent;
+    n->position = cp;
     if(parent!=NULL){
         n->node_index = parent->node_index<<1;
         n->depth = n->parent->depth + 1;
@@ -129,7 +130,24 @@ void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {
 }
 
 void delete_leaf(LTree *tree, uint index) {
-
+    //TODO: Check if node is leaf node
+    Node *leaf_to_delete = find_node_by_index(tree, index);
+    Node *leaf_to_keep = NULL;
+    if(leaf_to_delete->position == RIGHT){
+        leaf_to_keep = leaf_to_delete->parent->left_child;
+        leaf_to_delete->parent->left_child = NULL;
+    }
+    if(leaf_to_delete->position == LEFT){
+        leaf_to_keep = leaf_to_delete->parent->right_child;
+        leaf_to_delete->parent->right_child = NULL;
+    }
+    if(leaf_to_delete->parent->position == RIGHT){
+        leaf_to_delete->parent->right_child = leaf_to_keep;
+    }
+    else if(leaf_to_delete->parent->position == LEFT){
+        leaf_to_delete->parent->left_child = leaf_to_keep;
+    }
+    destroy_node(leaf_to_delete);
 }
 
 int calculate_tree_outcome(LTree *tree, int *data_array, uint max_data_index) {
@@ -141,6 +159,7 @@ int get_tree_depth(LTree *tree) {
 }
 
 int get_number_of_leaves(LTree *tree) {
+
     return 0;
 }
 

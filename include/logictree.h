@@ -18,6 +18,7 @@ struct node {
     uint depth;
     uint node_index;
     uint data_index;
+    childPosition position;
 };
 
 struct logicTree {
