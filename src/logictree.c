@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include "logictree.h"
 #include "stdlib.h"
 
@@ -29,6 +30,12 @@ void destroy_tree(LTree *tree) {
         destroy_node(tree->root_node);
     }
     free(tree);
+}
+
+Node *copy_node(Node *src){
+    Node *dest_node = malloc(sizeof(Node));
+    memcpy(dest_node,src, sizeof(Node));
+    return dest_node;
 }
 
 Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp){
