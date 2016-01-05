@@ -25,6 +25,7 @@ struct node {
     uint depth;
     uint node_index;
     uint data_index;
+    childPosition position;
 };
 /* logicTree represents a hierarchical binary tree with nodes containing either a data index or a boolean connector
  *
@@ -49,6 +50,8 @@ void delete_leaf(LTree *tree, uint index);
 // Other tree operations
 LTree *create_new_tree();
 Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp);
+Node *find_node_by_index(LTree *tree, uint node_index);
+Node *copy_node(Node *src);
 void destroy_tree(LTree *tree);
 void destroy_node(Node *node);
 

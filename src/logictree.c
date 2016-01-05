@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include "logictree.h"
 #include "stdlib.h"
 
@@ -31,6 +32,12 @@ void destroy_tree(LTree *tree) {
     free(tree);
 }
 
+Node *copy_node(Node *src){
+    Node *dest_node = malloc(sizeof(Node));
+    memcpy(dest_node,src, sizeof(Node));
+    return dest_node;
+}
+
 Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp){
     //TODO: adjust tree height when creating node
     Node *n = malloc(sizeof(Node));
@@ -38,6 +45,7 @@ Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp
     n->right_child = NULL;
     n->type = type;
     n->parent = parent;
+    n->position = cp;
     if(parent!=NULL){
         n->node_index = parent->node_index<<1;
         n->depth = n->parent->depth + 1;
@@ -65,8 +73,8 @@ void destroy_node(Node *n){
         if(n->left_child){
             destroy_node(n->left_child);
         }
-        free(n);
     }
+    free(n);
 }
 
 void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_index, nodeType new_child_type){
@@ -89,11 +97,102 @@ void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_
         Node *new_child_right = create_node(cur_node, cur_node->type, cur_node->data_index, RIGHT);
         Node *new_child_left = create_node(cur_node, new_child_type, new_child_index, LEFT);
         uint depth = new_child_right->depth;
-        tree->height = MAX(depth, tree->height);
+        tree->height = MAX(depth+1, tree->height);
         cur_node->data_index = NULL;
         cur_node->type = new_connector;
     }
     else{
-        printf(stderr, "No rootnode available. Create a tree first and pass the correct pointer.");
+        fprintf(stderr, "No rootnode available. Create a tree first and pass the correct pointer.");
     }
+}
+
+void alternate_leaf(LTree *tree, uint index, Node *new_node) {
+    //TODO: Check whether new_node is of type leaf
+    Node *old_node = find_node_by_index(tree, index);
+    if(old_node->parent->right_child == old_node){
+        old_node->parent->right_child = new_node;
+    }
+    else if(old_node->parent->left_child == old_node){
+        old_node->parent->left_child = new_node;
+    }
+    new_node->right_child = old_node->right_child;
+    new_node->left_child = old_node->left_child;
+    old_node->right_child = NULL;
+    old_node->left_child = NULL;
+    destroy_node(old_node);
+}
+
+void alternate_operator(LTree *tree, uint index, nodeType type) {
+    //TODO: Check whether current_node is already an operator.
+    Node *current_node = find_node_by_index(tree, index);
+    current_node->type = type;
+}
+
+void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child) {
+
+}
+
+void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {
+
+}
+
+void delete_leaf(LTree *tree, uint index) {
+    //TODO: Check if node is leaf node
+    Node *leaf_to_delete = find_node_by_index(tree, index);
+    Node *leaf_to_keep = NULL;
+    if(leaf_to_delete->position == RIGHT){
+        leaf_to_keep = leaf_to_delete->parent->left_child;
+        leaf_to_delete->parent->left_child = NULL;
+    }
+    if(leaf_to_delete->position == LEFT){
+        leaf_to_keep = leaf_to_delete->parent->right_child;
+        leaf_to_delete->parent->right_child = NULL;
+    }
+    if(leaf_to_delete->parent->position == RIGHT){
+        leaf_to_delete->parent->right_child = leaf_to_keep;
+    }
+    else if(leaf_to_delete->parent->position == LEFT){
+        leaf_to_delete->parent->left_child = leaf_to_keep;
+    }
+    destroy_node(leaf_to_delete);
+}
+
+int calculate_tree_outcome(LTree *tree, int *data_array, uint max_data_index) {
+    return 0;
+}
+
+int get_tree_depth(LTree *tree) {
+    return 0;
+}
+
+int get_number_of_leaves(LTree *tree) {
+
+    return 0;
+}
+
+Node* find_node_by_index(LTree *tree, uint node_index){
+
+    if(node_index>>(sizeof(uint)*8) == 1){
+        printf(stderr, "highest bit set on node index. Should not happen.");
+    }
+    else {
+        uint current_bit_mask = 1 << (sizeof(uint)*8);
+        while (node_index & current_bit_mask == 0) {
+            current_bit_mask >>=1;
+        }
+        Node *current_node = tree->root_node;
+        current_bit_mask >>= 1; //root_node is the first set bit
+        while (current_bit_mask > 0){
+            if(node_index & current_bit_mask == 1){
+                current_node = current_node->right_child;
+            }
+            else if(node_index & current_bit_mask == 0){
+                current_node = current_node->left_child;
+            }
+            current_bit_mask >>= 1;
+        }
+        return current_node;
+    }
+    return NULL;
+
 }

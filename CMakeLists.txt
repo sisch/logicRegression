@@ -3,7 +3,7 @@ project(logicRegression)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -DDEBUG -std=c11")
 
-set(SOURCE_FILES src/main.c include/main.h src/logictree.c include/logictree.h)
+set(SOURCE_FILES src/main.c include/main.h src/logictree.c include/logictree.h src/helpers.c include/helpers.h)
 
 include_directories(./include)
 
