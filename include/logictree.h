@@ -10,6 +10,13 @@ typedef struct node Node;
 typedef struct logicTree LTree;
 typedef enum nodeType {AND, OR, INDEX, INDEX_COMPLEMENT, ONE} nodeType;
 typedef enum childPosition {LEFT, RIGHT} childPosition;
+/* node contains the values and boolean operators in a logicTree
+ *
+ * nodes can be boolean connectors, namely AND and OR, or a data_index.
+ * If a node is a connector it must have two child nodes which are connected by the boolean function
+ * If a node is a data index it contains an unsigned integer as index of a corresponding data array.
+ * In addition to the data_index of a node a flag can determine, whether the data value is to be negated.
+ */
 struct node {
     nodeType type;
     Node *left_child;
@@ -19,7 +26,12 @@ struct node {
     uint node_index;
     uint data_index;
 };
-
+/* logicTree represents a hierarchical binary tree with nodes containing either a data index or a boolean connector
+ *
+ * A logicTree consists of a pointer to the root_node (state upon initialization -> TRUE),
+ * a pointer to the next_tree (in case of multiple trees),
+ * and an unsigned integer representing the height of the tree (i.e. max distance to ANY leaf node)
+ */
 struct logicTree {
     Node *root_node;
     LTree *next_tree;
