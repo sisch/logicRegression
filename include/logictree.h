@@ -1,6 +1,6 @@
 // Simon Schliesky
 // Last change 2015-09-08
-
+/** @file */
 #include <zconf.h>
 
 #ifndef LOGICREGRESSION_LOGICTREE_H
@@ -8,24 +8,28 @@
 
 typedef struct node Node;
 typedef struct logicTree LTree;
+/**
+ * nodeType
+ */
 typedef enum nodeType {AND, OR, INDEX, INDEX_COMPLEMENT, ONE} nodeType;
+/**
+ * childPosition
+ */
 typedef enum childPosition {LEFT, RIGHT} childPosition;
 /* node contains the values and boolean operators in a logicTree
  *
- * nodes can be boolean connectors, namely AND and OR, or a data_index.
- * If a node is a connector it must have two child nodes which are connected by the boolean function
- * If a node is a data index it contains an unsigned integer as index of a corresponding data array.
- * In addition to the data_index of a node a flag can determine, whether the data value is to be negated.
+ * Besides holding values or boolean connectors, the hierarchy of the logic tree is resembled by having pointers
+ * to up to two child elements and one parent element.
  */
 struct node {
-    nodeType type;
-    Node *left_child;
-    Node *right_child;
-    Node *parent;
-    uint depth;
-    uint node_index;
-    uint data_index;
-    childPosition position;
+    nodeType type;          /**< #nodeType identifier*/
+    Node *left_child;       /**< pointer to the left child #node */
+    Node *right_child;      /**< pointer to the right child #node */
+    Node *parent;           /**< pointer to the parent #node */
+    uint depth;             /**< The depth of a node is defined as distance to the root node */
+    uint node_index;        /**< A unique numeric index within the logicTree */
+    uint data_index;        /**< A numeric index denoting the position of input data in the input array. */
+    childPosition position; /**< The #childPosition in a logicTree as seen from the parent node */
 };
 /* logicTree represents a hierarchical binary tree with nodes containing either a data index or a boolean connector
  *
