@@ -8,3 +8,6 @@ set(SOURCE_FILES src/main.c include/main.h src/logictree.c include/logictree.h s
 include_directories(./include)
 
 add_executable(logicRegression ${SOURCE_FILES})
+
+set(SOURCE_TEST src/logictree.c include/logictree.h src/helpers.c include/helpers.h src/test.c)
+add_executable(test_logicregression ${SOURCE_TEST})
