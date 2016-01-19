@@ -35,8 +35,6 @@ static void test_node_members(){
     Node* A = create_node(NULL,AND,1,-1);
     Node* B = create_node(A,ONE,2,LEFT);
     Node* C = create_node(A,ONE,3,RIGHT);
-    A->left_child = B;
-    A->right_child = C;
     assert(A->left_child->parent == A);
     printf("\tNode relation left child's parent: passed\n");
     assert(A->left_child->position == LEFT);
@@ -51,8 +49,6 @@ static void test_node_destruction(){
     Node* A = create_node(NULL,AND,1,-1);
     Node* B = create_node(A,ONE,2,LEFT);
     Node* C = create_node(A,ONE,3,RIGHT);
-    A->left_child = B;
-    A->right_child = C;
     printf("\tNode child destruction: passed\n");
 
 }
