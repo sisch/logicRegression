@@ -48,7 +48,7 @@ void alternate_leaf(LTree *tree, uint index, Node *new_node); // 3rd parameter c
 void alternate_operator(LTree *tree, uint index, nodeType type);
 void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child);
 void prune_branch(LTree *tree, uint index, childPosition delete_child_at);
-void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_index, nodeType new_child_type);
+void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_data_index, nodeType new_child_type);
 void delete_leaf(LTree *tree, uint index);
 
 // Other tree operations

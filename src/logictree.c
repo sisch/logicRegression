@@ -16,7 +16,7 @@ bool is_bit_set(uint index, uint position){
 LTree *create_new_tree(){
     LTree *t = malloc(sizeof(LTree));
     t->next_tree = NULL;
-    t->root_node = create_node(NULL,ONE, NULL, RIGHT);
+    t->root_node = create_node(NULL,ONE, -1, RIGHT);
     t->root_node->node_index = 1;
     t->height =1;
     return t;
@@ -87,25 +87,26 @@ void destroy_node(Node **n){
     *n = NULL;
 }
 
-void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_index, nodeType new_child_type){
-    Node *cur_node = tree->root_node;
+void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_data_index, nodeType new_child_type){
+    /*Node *cur_node = tree->root_node;
     // Node index in bitwise comparison is 1: right child node; 0: left child node
     for ( uint i = tree->height - 1; i > 0;i--){
         if (is_bit_set(index, i)){
-            cur_node = cur_node->right_child;
-        }
-        else {
             cur_node = cur_node->left_child;
         }
+        else {
+            cur_node = cur_node->right_child;
+        }
     }
-
+*/
+    Node *cur_node = find_node_by_index(tree, index);
     // At the specified node:
     // Create a copy as right child node
     // Link to new_child as left child
     // switch cur_node type to new_connector
     if (cur_node != NULL) {
         Node *new_child_right = create_node(cur_node, cur_node->type, cur_node->data_index, RIGHT);
-        Node *new_child_left = create_node(cur_node, new_child_type, new_child_index, LEFT);
+        create_node(cur_node, new_child_type, new_child_data_index, LEFT);
         uint depth = new_child_right->depth;
         tree->height = MAX(depth+1, tree->height);
         cur_node->data_index = NULL;
@@ -181,28 +182,27 @@ int get_number_of_leaves(LTree *tree) {
 }
 
 Node* find_node_by_index(LTree *tree, uint node_index){
-
-    if(node_index>>(sizeof(uint)*8) == 1){
+    uint current_bit_mask = 1;
+    for (int i = 1; i < (sizeof(uint)*8); i++){
+        current_bit_mask *= 2;
+    }
+    if((node_index & current_bit_mask) == 1){
         printf(stderr, "highest bit set on node index. Should not happen.");
+        return NULL;
     }
-    else {
-        uint current_bit_mask = 1 << (sizeof(uint)*8);
-        while (node_index & current_bit_mask == 0) {
-            current_bit_mask >>=1;
-        }
-        Node *current_node = tree->root_node;
-        current_bit_mask >>= 1; //root_node is the first set bit
-        while (current_bit_mask > 0){
-            if(node_index & current_bit_mask == 1){
-                current_node = current_node->right_child;
-            }
-            else if(node_index & current_bit_mask == 0){
-                current_node = current_node->left_child;
-            }
-            current_bit_mask >>= 1;
-        }
-        return current_node;
+    while ((node_index & current_bit_mask) == 0) {
+        current_bit_mask >>=1;
     }
-    return NULL;
-
+    Node *current_node = tree->root_node;
+    current_bit_mask >>= 1; //root_node is the first set bit
+    while (current_bit_mask > 0){
+        if((node_index & current_bit_mask) == current_bit_mask){
+            current_node = current_node->right_child;
+        }
+        else if((node_index & current_bit_mask) == 0){
+            current_node = current_node->left_child;
+        }
+        current_bit_mask >>= 1;
+    }
+    return current_node;
 }

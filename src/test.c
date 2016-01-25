@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <logictree.h>
 #include <stdio.h>
+#include <helpers.h>
 #include <stdlib.h>
 
 static void test_node_creation(){
@@ -65,6 +66,42 @@ static void test_tree_struct(){
     printf("\tSize tree instance: passed\n");
 }
 
+static void test_node_mod_split(LTree *test_tree){
+    nodeType newType = ONE;
+    split_leaf(test_tree, 1, OR, -1, newType);
+    assert(test_tree->height == 2);
+    printf("\tTree height updates: passed\n");
+    assert(test_tree->root_node->type == OR);
+    printf("\tLeaf new Type: passed\n");
+    assert(test_tree->root_node->left_child != NULL);
+    printf("\tLeaf has Left Child: passed\n");
+    assert(test_tree->root_node->right_child != NULL);
+    printf("\tLeaf has Right Child: passed\n");
+    assert(test_tree->root_node->right_child->type == ONE);
+    printf("\tLeaf right Child equals old_node (ONE): passed\n");
+    assert(test_tree->root_node->left_child->type == newType);
+    printf("\tLeaf left Child type: passed\n");
+    split_leaf(test_tree, 2, AND, 5, INDEX);
+    split_leaf(test_tree, 3, OR, 2, INDEX_COMPLEMENT);
+    assert(find_node_by_index(test_tree, 1) != NULL); //test_tree->root_node);
+    printf("\troot node index: passed\n");
+    assert(find_node_by_index(test_tree, 3) == test_tree->root_node->right_child);
+    printf("\tright child index: passed\n");
+    assert(find_node_by_index(test_tree, 4)->type == INDEX);
+    printf("\tnode 4 type: passed\n");
+    assert(find_node_by_index(test_tree, 6)->type == INDEX_COMPLEMENT);
+    printf("\tnode 6 type: passed\n");
+
+
+
+
+}
+
+static void test_node_modification(){
+    LTree *test_node = create_new_tree();
+    printf(" - Node Mod 01 : Split Leaf\n");
+    test_node_mod_split(test_node);
+}
 
 static void run_all_node_tests(){
     printf("Testing Node 01 :: Node creation\n");
@@ -73,7 +110,8 @@ static void run_all_node_tests(){
     test_node_members();
     printf("Testing Node 03 :: Node destruction\n");
     test_node_destruction();
-
+    printf("Testing Node 04 :: Modification\n");
+    test_node_modification();
 }
 static void run_all_tree_tests(){
     printf("Testing Tree 01\n");
