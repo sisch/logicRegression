@@ -57,7 +57,7 @@ Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp
 Node *find_node_by_index(LTree *tree, uint node_index);
 Node *copy_node(Node *src);
 void destroy_tree(LTree *tree);
-void destroy_node(Node *node);
+void destroy_node(Node **node);
 
 // arithmetic tree output
 int calculate_tree_outcome(LTree *tree, int *data_array, uint max_data_index);

@@ -60,21 +60,31 @@ Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp
     }
     else{
         n->node_index = 1;
+        n->depth = 0;
     }
     n->data_index = data_index;
     return n;
 }
 
-void destroy_node(Node *n){
-    if(n != NULL){
-        if(n->right_child != NULL){
-            destroy_node(n->right_child);
+void destroy_node(Node **n){
+    if(*n != NULL){
+        if((*n)->right_child != NULL){
+            destroy_node(&((*n)->right_child));
         }
-        if(n->left_child){
-            destroy_node(n->left_child);
+        if((*n)->left_child){
+            destroy_node(&((*n)->left_child));
         }
     }
-    free(n);
+    if((*n)->parent != NULL){
+        if((*n)->position == LEFT){
+            (*n)->parent->left_child = NULL;
+        }
+        else{
+            (*n)->parent->right_child = NULL;
+        }
+    }
+    free(*n);
+    *n = NULL;
 }
 
 void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_index, nodeType new_child_type){

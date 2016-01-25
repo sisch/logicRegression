@@ -47,8 +47,11 @@ static void test_node_members(){
 
 static void test_node_destruction(){
     Node* A = create_node(NULL,AND,1,-1);
-    Node* B = create_node(A,ONE,2,LEFT);
-    Node* C = create_node(A,ONE,3,RIGHT);
+    create_node(A,ONE,2,LEFT);
+    create_node(A,ONE,3,RIGHT);
+
+    destroy_node(&A);
+    assert(A == NULL);
     printf("\tNode child destruction: passed\n");
 
 }
