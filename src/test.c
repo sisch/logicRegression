@@ -135,7 +135,18 @@ static void test_node_mod_alternate(LTree *test_tree){
     printf("\tnew leaf node index: passed\n");
     assert(find_node_by_index(test_tree,6)->depth == 2);
     printf("\tnew leaf depth: passed\n");
+}
 
+static void test_node_mod_alternate2(LTree *test_tree){
+    nodeType newType = ONE;
+    split_leaf(test_tree, 1, OR, -1, newType);
+    split_leaf(test_tree, 2, AND, 5, INDEX);
+    split_leaf(test_tree, 3, OR, 2, INDEX_COMPLEMENT);
+    assert(find_node_by_index(test_tree,3)->type == OR);
+    printf("\ttest node initial type OR: passed\n");
+    alternate_operator(test_tree, 3, AND);
+    assert(find_node_by_index(test_tree,3)->type == AND);
+    printf("\ttest node type AND: passed\n");
 }
 
 static void test_node_modification(){
@@ -144,6 +155,8 @@ static void test_node_modification(){
     test_node_mod_split(test_node);
     printf(" - Node Mod 02 : Alternate Leaf\n");
     test_node_mod_alternate(test_node);
+    printf(" - Node Mod 03 : Alternate Operator\n");
+    test_node_mod_alternate2(test_node);
 
 }
 

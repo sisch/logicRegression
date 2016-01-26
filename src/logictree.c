@@ -138,9 +138,13 @@ void alternate_leaf(LTree *tree, uint index, Node *new_node) {
 }
 
 void alternate_operator(LTree *tree, uint index, nodeType type) {
-    //TODO: Check whether current_node is already an operator.
-    Node *current_node = find_node_by_index(tree, index);
-    current_node->type = type;
+    Node *cur_node = find_node_by_index(tree, index);
+    assert(
+        (cur_node->type == AND || cur_node->type == OR)
+        && (type == AND || type == OR)
+        && "Only operator nodes can be altered with this function to another operator type"
+    );
+    cur_node->type = type;
 }
 
 void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child) {
