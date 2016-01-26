@@ -3,9 +3,9 @@
 // test.c
 #include <assert.h>
 #include <stdbool.h>
-#include <logictree.h>
+#include "logictree.h"
 #include <stdio.h>
-#include <helpers.h>
+#include "helpers.h"
 #include <stdlib.h>
 
 static void test_node_creation(){
@@ -44,6 +44,10 @@ static void test_node_members(){
     printf("\tNode relation right child's parent: passed\n");
     assert(A->right_child->position == RIGHT);
     printf("\tNode relation right child's position: passed\n");
+    assert(A->right_child == C);
+    printf("\tNode relation right child created right: passed\n");
+    assert(A->left_child == B);
+    printf("\tNode relation left child created left: passed\n");
 }
 
 static void test_node_destruction(){
