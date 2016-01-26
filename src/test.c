@@ -131,6 +131,10 @@ static void test_node_mod_alternate(LTree *test_tree){
     assert(find_node_by_index(test_tree,6)->type == newType);
     printf("\tchange test leaf type to IC: passed\n");
 
+    assert(find_node_by_index(test_tree,6)->node_index == 6);
+    printf("\tnew leaf node index: passed\n");
+    assert(find_node_by_index(test_tree,6)->depth == 2);
+    printf("\tnew leaf depth: passed\n");
 
 }
 

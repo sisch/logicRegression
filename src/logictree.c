@@ -6,6 +6,7 @@
 #include <string.h>
 #include "logictree.h"
 #include <stdlib.h>
+#include <assert.h>
 
 #define MAX(a,b) ((a) > (b) ? a : b)
 #define MIN(a,b) ((a) < (b) ? a : b)
@@ -119,14 +120,19 @@ void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_
 
 void alternate_leaf(LTree *tree, uint index, Node *new_node) {
     //TODO: Check whether new_node is of type leaf
+    assert(new_node->parent == NULL && "New leaf is not allowed to be an existing node of any tree");
     Node *old_node = find_node_by_index(tree, index);
     new_node->parent = old_node->parent;
+    new_node->node_index = index;
+    new_node->depth = new_node->parent->depth+1;
     old_node->parent = NULL;
     if(old_node->position == RIGHT){
         new_node->parent->right_child = new_node;
+        new_node->position = RIGHT;
     }
     else if(old_node->position == LEFT){
         new_node->parent->left_child = new_node;
+        new_node->position = LEFT;
     }
     destroy_node(&old_node);
 }

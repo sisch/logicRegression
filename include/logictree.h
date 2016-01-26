@@ -44,6 +44,12 @@ struct logicTree {
 };
 
 // Allowed set of moves to alter a tree
+/* alternate_leaf replaces a leaf node with a new one
+ *
+ * With this function you can either change the type of a leaf (INDEX, INDEX_COMPLEMENT, ONE),
+ * the data index, or both. This function can technically attach a subtree as well, this leads to
+ * undefined behavior, though.
+ */
 void alternate_leaf(LTree *tree, uint index, Node *new_node); // 3rd parameter could also be a new value of dataIndex only
 void alternate_operator(LTree *tree, uint index, nodeType type);
 void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child);
