@@ -87,7 +87,7 @@ static void test_node_mod_split(LTree *test_tree){
     printf("\tLeaf left Child type: passed\n");
     split_leaf(test_tree, 2, AND, 5, INDEX);
     split_leaf(test_tree, 3, OR, 2, INDEX_COMPLEMENT);
-    assert(find_node_by_index(test_tree, 1) != NULL); //test_tree->root_node);
+    assert(find_node_by_index(test_tree, 1) != NULL);
     printf("\troot node index: passed\n");
     assert(find_node_by_index(test_tree, 3) == test_tree->root_node->right_child);
     printf("\tright child index: passed\n");
@@ -95,8 +95,41 @@ static void test_node_mod_split(LTree *test_tree){
     printf("\tnode 4 type: passed\n");
     assert(find_node_by_index(test_tree, 6)->type == INDEX_COMPLEMENT);
     printf("\tnode 6 type: passed\n");
+}
 
+static void test_node_mod_alternate(LTree *test_tree){
+    nodeType newType = ONE;
+    split_leaf(test_tree, 1, OR, -1, newType);
+    split_leaf(test_tree, 2, AND, 5, INDEX);
+    split_leaf(test_tree, 3, OR, 2, INDEX_COMPLEMENT);
+    assert(find_node_by_index(test_tree,6)->right_child == NULL && find_node_by_index(test_tree,6)->left_child == NULL);
+    printf("\ttest node is leaf: passed\n");
+    assert(find_node_by_index(test_tree,6)->type == INDEX_COMPLEMENT);
+    printf("\ttest leaf type before alternate IC: passed\n");
+    Node *test_node = create_node(NULL,newType,-1,NULL);
 
+    alternate_leaf(test_tree,6,test_node);
+    assert(find_node_by_index(test_tree,6)->parent == find_node_by_index(test_tree,3));
+    printf("\ttest leaf parent: passed\n");
+    assert(find_node_by_index(test_tree,3)->left_child == find_node_by_index(test_tree,6));
+    printf("\ttest leaf leftchild of parent: passed\n");
+    assert(find_node_by_index(test_tree,6)->position == LEFT);
+    printf("\ttest leaf child position: passed\n");
+
+    newType = ONE;
+    alternate_leaf(test_tree,6,create_node(NULL,newType,-1,NULL));
+    assert(find_node_by_index(test_tree,6)->type == newType);
+    printf("\tchange test leaf type to ONE: passed\n");
+
+    newType = INDEX;
+    alternate_leaf(test_tree,6,create_node(NULL,newType,-1,NULL));
+    assert(find_node_by_index(test_tree,6)->type == newType);
+    printf("\tchange test leaf type to INDEX: passed\n");
+
+    newType = INDEX_COMPLEMENT;
+    alternate_leaf(test_tree,6,create_node(NULL,newType,-1,NULL));
+    assert(find_node_by_index(test_tree,6)->type == newType);
+    printf("\tchange test leaf type to IC: passed\n");
 
 
 }
@@ -105,6 +138,9 @@ static void test_node_modification(){
     LTree *test_node = create_new_tree();
     printf(" - Node Mod 01 : Split Leaf\n");
     test_node_mod_split(test_node);
+    printf(" - Node Mod 02 : Alternate Leaf\n");
+    test_node_mod_alternate(test_node);
+
 }
 
 static void run_all_node_tests(){
