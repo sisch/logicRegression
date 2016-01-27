@@ -149,6 +149,10 @@ static void test_node_mod_alternate2(LTree *test_tree){
     printf("\ttest node type AND: passed\n");
 }
 
+static void test_node_grow_branch(LTree *test_tree){
+
+}
+
 static void test_node_modification(){
     LTree *test_node = create_new_tree();
     printf(" - Node Mod 01 : Split Leaf\n");
@@ -157,7 +161,8 @@ static void test_node_modification(){
     test_node_mod_alternate(test_node);
     printf(" - Node Mod 03 : Alternate Operator\n");
     test_node_mod_alternate2(test_node);
-
+    printf(" - Node Mod 04 : Grow Branch\n");
+    test_node_grow_branch(test_node);
 }
 
 static void run_all_node_tests(){
@@ -169,6 +174,7 @@ static void run_all_node_tests(){
     test_node_destruction();
     printf("Testing Node 04 :: Modification\n");
     test_node_modification();
+
 }
 static void run_all_tree_tests(){
     printf("Testing Tree 01\n");
