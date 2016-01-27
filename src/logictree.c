@@ -36,6 +36,7 @@ void destroy_tree(LTree *tree) {
 Node *copy_node(Node *src){
     Node *dest_node = malloc(sizeof(Node));
     memcpy(dest_node,src, sizeof(Node));
+    dest_node->parent = NULL;
     return dest_node;
 }
 
