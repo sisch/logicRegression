@@ -149,7 +149,23 @@ void alternate_operator(LTree *tree, uint index, nodeType type) {
 }
 
 void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child) {
+    Node *old_node = find_node_by_index(tree, index);
+    Node *new_node = create_node(old_node->parent, new_connector, -1, old_node->position);
+    old_node->position = RIGHT;
+    new_child->position = LEFT;
+    new_node->node_index = new_node->parent->node_index * 2 + 1;
+    new_child->node_index = new_node->node_index * 2;
+    old_node->node_index = new_node->node_index * 2 + 1; // shorter than ((idx-1)*2)+1
+    new_node->depth = new_node->parent->depth + 1;
+    new_child->depth = new_node->depth + 1;
+    old_node->depth = new_node->depth + 1;
 
+    new_node->left_child = new_child;
+    new_child->parent = new_node;
+    new_node->right_child = old_node;
+    old_node->parent = new_node;
+
+    // TODO: traverse indices,depths of sub tree
 }
 
 void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {

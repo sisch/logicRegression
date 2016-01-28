@@ -106,7 +106,7 @@ static void test_node_mod_alternate(LTree *test_tree){
     printf("\ttest node is leaf: passed\n");
     assert(find_node_by_index(test_tree,6)->type == INDEX_COMPLEMENT);
     printf("\ttest leaf type before alternate IC: passed\n");
-    Node *test_node = create_node(NULL,newType,-1,NULL);
+    Node *test_node = create_node(NULL,newType,-1,-1);
 
     alternate_leaf(test_tree,6,test_node);
     assert(find_node_by_index(test_tree,6)->parent == find_node_by_index(test_tree,3));
@@ -117,17 +117,17 @@ static void test_node_mod_alternate(LTree *test_tree){
     printf("\ttest leaf child position: passed\n");
 
     newType = ONE;
-    alternate_leaf(test_tree,6,create_node(NULL,newType,-1,NULL));
+    alternate_leaf(test_tree,6,create_node(NULL,newType,-1,-1));
     assert(find_node_by_index(test_tree,6)->type == newType);
     printf("\tchange test leaf type to ONE: passed\n");
 
     newType = INDEX;
-    alternate_leaf(test_tree,6,create_node(NULL,newType,-1,NULL));
+    alternate_leaf(test_tree,6,create_node(NULL,newType,-1,-1));
     assert(find_node_by_index(test_tree,6)->type == newType);
     printf("\tchange test leaf type to INDEX: passed\n");
 
     newType = INDEX_COMPLEMENT;
-    alternate_leaf(test_tree,6,create_node(NULL,newType,-1,NULL));
+    alternate_leaf(test_tree,6,create_node(NULL,newType,-1,-1));
     assert(find_node_by_index(test_tree,6)->type == newType);
     printf("\tchange test leaf type to IC: passed\n");
 
@@ -150,6 +150,19 @@ static void test_node_mod_alternate2(LTree *test_tree){
 }
 
 static void test_node_grow_branch(LTree *test_tree){
+    Node *test_node = create_node(NULL, ONE, -1, -1);
+    grow_branch(test_tree, 3, OR, test_node);
+    assert(find_node_by_index(test_tree,3)->type == OR);
+    printf("\ttest node type AND: passed\n");
+    print_tree(test_tree->root_node);
+    assert(find_node_by_index(test_tree,6)->type == ONE);
+    printf("\ttest node type AND: passed\n");
+    assert(find_node_by_index(test_tree,6)->depth == 2);
+    printf("\ttest node type AND: passed\n");
+    assert(find_node_by_index(test_tree,7)->depth == 2);
+    printf("\ttest node type AND: passed\n");
+    assert(find_node_by_index(test_tree,13)->depth == 3);
+    printf("\ttest node type AND: passed\n");
 
 }
 
