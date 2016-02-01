@@ -155,7 +155,31 @@ static void test_node_grow_branch(LTree *test_tree){
     assert(test_tree->root_node->right_child->type == AND);
     printf("\tgrow node new type: passed\n");
     assert(test_tree->root_node->right_child->node_index == 3);
-    printf("\tgrow node node index: passed\n");
+    printf("\tgrow node node_index: passed\n");
+    for (uint i = 1; i<16; i++){
+        Node *cur = find_node_by_index(test_tree,i);
+        if(cur!=NULL){
+            assert(cur->node_index==i);
+        }
+        printf("\t\tnode_index %i: passed\n", i);
+    }
+    printf("\tAll indices tested: passed\n");
+    assert(find_node_by_index(test_tree, 1)->type == OR);
+    printf("\tNode 1 type: passed\n");
+    assert(find_node_by_index(test_tree, 3)->type == AND);
+    printf("\tNode 3 type: passed\n");
+    assert(find_node_by_index(test_tree, 6)->type == INDEX);
+    printf("\tNode 6 type: passed\n");
+    assert(find_node_by_index(test_tree, 14)->type == INDEX_COMPLEMENT);
+    printf("\tNode 14 type: passed\n");
+    assert(find_node_by_index(test_tree, 6)->data_index == 3);
+    printf("\tNode 6 data_index: passed\n");
+    assert(find_node_by_index(test_tree, 14)->data_index == 2);
+    printf("\tNode 14 data_index: passed\n");
+    assert(find_node_by_index(test_tree, 15)->type == ONE);
+    printf("\tNode 15 type: passed\n");
+
+
 
 }
 

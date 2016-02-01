@@ -69,6 +69,6 @@ void destroy_node(Node **node);
 int calculate_tree_outcome(LTree *tree, int *data_array, uint max_data_index);
 int get_tree_depth(LTree *tree);
 int get_number_of_leaves(LTree *tree);
-
+void recalculate_indices(Node *root_node, uint index_of_root);
 
 #endif //LOGICREGRESSION_LOGICTREE_H

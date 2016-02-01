@@ -155,16 +155,15 @@ void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_chil
     new_child->position = LEFT;
     new_node->node_index = new_node->parent->node_index * 2 + 1;
     new_child->node_index = new_node->node_index * 2;
-    old_node->node_index = new_node->node_index * 2 + 1; // shorter than ((idx-1)*2)+1
     new_node->depth = new_node->parent->depth + 1;
     new_child->depth = new_node->depth + 1;
     old_node->depth = new_node->depth + 1;
-
     new_node->left_child = new_child;
     new_child->parent = new_node;
     new_node->right_child = old_node;
     old_node->parent = new_node;
 
+    recalculate_indices(new_node, index);
     // TODO: traverse indices,depths of sub tree
 }
 
@@ -206,7 +205,7 @@ int get_number_of_leaves(LTree *tree) {
     return 0;
 }
 
-Node* find_node_by_index(LTree *tree, uint node_index){
+Node* find_node_by_index(LTree *tree, uint node_index) {
     uint current_bit_mask = 1;
     for (int i = 1; i < (sizeof(uint)*8); i++){
         current_bit_mask *= 2;
@@ -233,4 +232,16 @@ Node* find_node_by_index(LTree *tree, uint node_index){
         }
     }
     return current_node;
+}
+
+void recalculate_indices(Node *root_node, uint index_of_root) {
+    if(root_node!=NULL) {
+        root_node->node_index = index_of_root;
+        if(root_node->left_child != NULL) {
+            recalculate_indices(root_node->left_child, index_of_root * 2);
+        }
+        if(root_node->right_child != NULL) {
+            recalculate_indices(root_node->right_child, index_of_root * 2 + 1);
+        }
+    }
 }
