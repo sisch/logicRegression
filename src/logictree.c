@@ -211,7 +211,7 @@ Node* find_node_by_index(LTree *tree, uint node_index){
     for (int i = 1; i < (sizeof(uint)*8); i++){
         current_bit_mask *= 2;
     }
-    if((node_index & current_bit_mask) == 1){
+    if((node_index & current_bit_mask) == current_bit_mask){
         printf(stderr, "highest bit set on node index. Should not happen.");
         return NULL;
     }
@@ -228,6 +228,9 @@ Node* find_node_by_index(LTree *tree, uint node_index){
             current_node = current_node->left_child;
         }
         current_bit_mask >>= 1;
+        if (current_node == NULL){
+            return NULL;
+        }
     }
     return current_node;
 }
