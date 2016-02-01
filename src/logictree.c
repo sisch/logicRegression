@@ -28,7 +28,7 @@ void destroy_tree(LTree *tree) {
         if (tree->next_tree != NULL) {
             destroy_tree(tree->next_tree);
         }
-        destroy_node(tree->root_node);
+        destroy_node(&tree->root_node);
     }
     free(tree);
 }

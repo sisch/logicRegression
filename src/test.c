@@ -8,6 +8,14 @@
 #include "helpers.h"
 #include <stdlib.h>
 
+LTree *default_tree(){
+    LTree *new_tree = create_new_tree();
+    split_leaf(new_tree, 1, OR, -1, ONE);
+    split_leaf(new_tree, 2, AND, 5, INDEX);
+    split_leaf(new_tree, 3, OR, 2, INDEX_COMPLEMENT);
+    return new_tree;
+}
+
 static void test_node_creation(){
     assert(sizeof(Node) == 48);
     printf("\tStruct Size: passed\n");
@@ -61,32 +69,22 @@ static void test_node_destruction(){
 
 }
 
-static void test_tree_struct(){
-    assert(sizeof(LTree) == 24);
-    printf("\tStruct Size: passed\n");
-    assert(create_new_tree() != NULL);
-    printf("\tCreate new tree: passed\n");
-    assert(sizeof(*create_new_tree()) == 24);
-    printf("\tSize tree instance: passed\n");
-}
-
 static void test_node_mod_split(LTree *test_tree){
-    nodeType newType = ONE;
-    split_leaf(test_tree, 1, OR, -1, newType);
+    split_leaf(test_tree, 1, OR, -1, ONE);
     assert(test_tree->height == 2);
     printf("\tTree height updates: passed\n");
+    split_leaf(test_tree, 2, AND, 5, INDEX);
+    split_leaf(test_tree, 3, OR, 2, INDEX_COMPLEMENT);
     assert(test_tree->root_node->type == OR);
     printf("\tLeaf new Type: passed\n");
     assert(test_tree->root_node->left_child != NULL);
     printf("\tLeaf has Left Child: passed\n");
     assert(test_tree->root_node->right_child != NULL);
     printf("\tLeaf has Right Child: passed\n");
-    assert(test_tree->root_node->right_child->type == ONE);
+    assert(test_tree->root_node->right_child->right_child->type == ONE);
     printf("\tLeaf right Child equals old_node (ONE): passed\n");
-    assert(test_tree->root_node->left_child->type == newType);
+    assert(test_tree->root_node->left_child->type == AND);
     printf("\tLeaf left Child type: passed\n");
-    split_leaf(test_tree, 2, AND, 5, INDEX);
-    split_leaf(test_tree, 3, OR, 2, INDEX_COMPLEMENT);
     assert(find_node_by_index(test_tree, 1) != NULL);
     printf("\troot node index: passed\n");
     assert(find_node_by_index(test_tree, 3) == test_tree->root_node->right_child);
@@ -95,6 +93,8 @@ static void test_node_mod_split(LTree *test_tree){
     printf("\tnode 4 type: passed\n");
     assert(find_node_by_index(test_tree, 6)->type == INDEX_COMPLEMENT);
     printf("\tnode 6 type: passed\n");
+    assert(find_node_by_index(test_tree, 7)->type == ONE);
+    printf("\tnode 7 type: passed\n");
 }
 
 static void test_node_mod_alternate(LTree *test_tree){
@@ -150,32 +150,31 @@ static void test_node_mod_alternate2(LTree *test_tree){
 }
 
 static void test_node_grow_branch(LTree *test_tree){
-    Node *test_node = create_node(NULL, ONE, -1, -1);
-    grow_branch(test_tree, 3, OR, test_node);
-    assert(find_node_by_index(test_tree,3)->type == OR);
-    printf("\ttest node type AND: passed\n");
-    print_tree(test_tree->root_node);
-    assert(find_node_by_index(test_tree,6)->type == ONE);
-    printf("\ttest node type AND: passed\n");
-    assert(find_node_by_index(test_tree,6)->depth == 2);
-    printf("\ttest node type AND: passed\n");
-    assert(find_node_by_index(test_tree,7)->depth == 2);
-    printf("\ttest node type AND: passed\n");
-    assert(find_node_by_index(test_tree,13)->depth == 3);
-    printf("\ttest node type AND: passed\n");
+    Node *new_node = create_node(NULL, INDEX, 3, NULL);
+    grow_branch(test_tree, 3, AND, new_node);
+    assert(test_tree->root_node->right_child->type == AND);
+    printf("\tgrow node new type: passed\n");
+    assert(test_tree->root_node->right_child->node_index == 3);
+    printf("\tgrow node node index: passed\n");
 
 }
 
 static void test_node_modification(){
-    LTree *test_node = create_new_tree();
+    LTree *test_tree = create_new_tree();
     printf(" - Node Mod 01 : Split Leaf\n");
-    test_node_mod_split(test_node);
+    test_node_mod_split(test_tree);
     printf(" - Node Mod 02 : Alternate Leaf\n");
-    test_node_mod_alternate(test_node);
+    destroy_tree(test_tree);
+    test_tree = default_tree();
+    test_node_mod_alternate(test_tree);
     printf(" - Node Mod 03 : Alternate Operator\n");
-    test_node_mod_alternate2(test_node);
+    destroy_tree(test_tree);
+    test_tree = default_tree();
+    test_node_mod_alternate2(test_tree);
     printf(" - Node Mod 04 : Grow Branch\n");
-    test_node_grow_branch(test_node);
+    destroy_tree(test_tree);
+    test_tree = default_tree();
+    test_node_grow_branch(test_tree);
 }
 
 static void run_all_node_tests(){
@@ -189,15 +188,33 @@ static void run_all_node_tests(){
     test_node_modification();
 
 }
+
+/*
+ * Tree Tests
+ *
+ */
+static void test_tree_struct(){
+    assert(sizeof(LTree) == 24);
+    printf("\tStruct Size: passed\n");
+    assert(create_new_tree() != NULL);
+    printf("\tCreate new tree: passed\n");
+    assert(sizeof(*create_new_tree()) == 24);
+    printf("\tSize tree instance: passed\n");
+}
+
 static void run_all_tree_tests(){
     printf("Testing Tree 01\n");
     test_tree_struct();
 }
 
+
+/*
+ * main test invocation
+ */
 int main(){
-    run_all_node_tests();
-    printf("\n");
     run_all_tree_tests();
+    printf("\n");
+    run_all_node_tests();
     printf("\n");
 
 }
