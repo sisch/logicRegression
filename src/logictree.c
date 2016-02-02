@@ -186,12 +186,16 @@ void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {
     }
     new_node->parent = old_node->parent;
     old_node->parent = NULL;
-    new_node->position = old_node->position;
-    if (new_node->position == LEFT) {
-        new_node->parent->left_child = new_node;
-    }
-    if (new_node->position == RIGHT) {
-        new_node->parent->right_child = new_node;
+    if(old_node == tree->root_node) {
+      tree->root_node = new_node;
+    } else {
+        new_node->position = old_node->position;
+        if (new_node->position == LEFT) {
+            new_node->parent->left_child = new_node;
+        }
+        if (new_node->position == RIGHT) {
+            new_node->parent->right_child = new_node;
+        }
     }
     destroy_node(&old_node);
     recalculate_indices(tree, tree->root_node, 1);

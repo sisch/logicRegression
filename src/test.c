@@ -193,6 +193,19 @@ static void test_node_prune_branch(LTree *test_tree){
     printf("\tprune node 3 new type: passed\n");
     assert(test_tree->height == 2);
     printf("\tTree height: passed\n");
+    // test prune root_node as well
+    test_tree = create_new_tree();
+    split_leaf(test_tree, 1, OR, -1, ONE);
+    split_leaf(test_tree, 3, OR, 2, INDEX_COMPLEMENT);
+    prune_branch(test_tree,1,LEFT);
+    assert(find_node_by_index(test_tree, 1)->type == OR);
+    printf("\tafter root prune node 1 type: passed\n");
+    assert(find_node_by_index(test_tree, 2)->type == INDEX_COMPLEMENT);
+    printf("\tafter root prune node 2 type: passed\n");
+    assert(find_node_by_index(test_tree, 3)->type == ONE);
+    printf("\tafter root prune node 3 type: passed\n");
+    assert(test_tree->height == 2);
+    printf("\tTree height: passed\n");
 }
 
 static void test_node_modification(){
