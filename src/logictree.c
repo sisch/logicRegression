@@ -168,7 +168,33 @@ void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_chil
 }
 
 void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {
-
+    Node *old_node = find_node_by_index(tree, index);
+    Node *new_node;
+    if (delete_child_at == LEFT) {
+        new_node = old_node->right_child;
+        old_node->right_child = NULL;
+        // assert child to delete is a leaf
+        assert(old_node->left_child->left_child == NULL);
+        assert(old_node->left_child->right_child == NULL);
+    }
+    else if (delete_child_at == RIGHT) {
+        new_node = old_node->left_child;
+        old_node->left_child = NULL;
+        // assert child to delete is a leaf
+        assert(old_node->right_child->left_child == NULL);
+        assert(old_node->right_child->right_child == NULL);
+    }
+    new_node->parent = old_node->parent;
+    old_node->parent = NULL;
+    new_node->position = old_node->position;
+    if (new_node->position == LEFT) {
+        new_node->parent->left_child = new_node;
+    }
+    if (new_node->position == RIGHT) {
+        new_node->parent->right_child = new_node;
+    }
+    destroy_node(&old_node);
+    recalculate_indices(tree, tree->root_node, 1);
 }
 
 void delete_leaf(LTree *tree, uint index) {
@@ -240,6 +266,10 @@ void recalculate_indices(LTree *tree, Node *root_node, uint index_of_root) {
         if (root_node->parent != NULL){
             root_node->depth = root_node->parent->depth + 1;
             tree->height = MAX(tree->height, root_node->depth +1);
+        }
+        else {
+            root_node->depth = 0;
+            tree->height = 1;
         }
         if(root_node->left_child != NULL) {
             recalculate_indices(tree, root_node->left_child, index_of_root * 2);

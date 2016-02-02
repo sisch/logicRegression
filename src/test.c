@@ -39,7 +39,6 @@ static void test_node_creation(){
     assert(testnode->type == ONE);
     printf("\tNode type ONE: passed\n");
 }
-
 static void test_node_members(){
     Node* A = create_node(NULL,AND,1,-1);
     Node* B = create_node(A,ONE,2,LEFT);
@@ -57,7 +56,6 @@ static void test_node_members(){
     assert(A->left_child == B);
     printf("\tNode relation left child created left: passed\n");
 }
-
 static void test_node_destruction(){
     Node* A = create_node(NULL,AND,1,-1);
     create_node(A,ONE,2,LEFT);
@@ -99,7 +97,6 @@ static void test_node_mod_split(LTree *test_tree){
     printf("\tTree height: passed\n");
 
 }
-
 static void test_node_mod_alternate(LTree *test_tree){
     nodeType newType = ONE;
     split_leaf(test_tree, 1, OR, -1, newType);
@@ -142,7 +139,6 @@ static void test_node_mod_alternate(LTree *test_tree){
     printf("\tTree height: passed\n");
 
 }
-
 static void test_node_mod_alternate2(LTree *test_tree){
     nodeType newType = ONE;
     split_leaf(test_tree, 1, OR, -1, newType);
@@ -156,7 +152,6 @@ static void test_node_mod_alternate2(LTree *test_tree){
     assert(test_tree->height == 3);
     printf("\tTree height: passed\n");
 }
-
 static void test_node_grow_branch(LTree *test_tree){
     Node *new_node = create_node(NULL, INDEX, 3, NULL);
     grow_branch(test_tree, 3, AND, new_node);
@@ -189,6 +184,16 @@ static void test_node_grow_branch(LTree *test_tree){
     assert(test_tree->height == 4);
     printf("\tTree height: passed\n");
 }
+static void test_node_prune_branch(LTree *test_tree){
+    prune_branch(test_tree, 2, LEFT);
+    assert(find_node_by_index(test_tree, 2)->type == ONE);
+    printf("\tprune node 2 new type: passed\n");
+    prune_branch(test_tree, 3, RIGHT);
+    assert(find_node_by_index(test_tree, 3)->type == INDEX_COMPLEMENT);
+    printf("\tprune node 3 new type: passed\n");
+    assert(test_tree->height == 2);
+    printf("\tTree height: passed\n");
+}
 
 static void test_node_modification(){
     LTree *test_tree = create_new_tree();
@@ -206,6 +211,10 @@ static void test_node_modification(){
     destroy_tree(test_tree);
     test_tree = default_tree();
     test_node_grow_branch(test_tree);
+    printf(" - Node Mod 05 : Prune Branch\n");
+    destroy_tree(test_tree);
+    test_tree = default_tree();
+    test_node_prune_branch(test_tree);
 }
 
 static void run_all_node_tests(){
