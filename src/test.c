@@ -95,6 +95,9 @@ static void test_node_mod_split(LTree *test_tree){
     printf("\tnode 6 type: passed\n");
     assert(find_node_by_index(test_tree, 7)->type == ONE);
     printf("\tnode 7 type: passed\n");
+    assert(test_tree->height == 3);
+    printf("\tTree height: passed\n");
+
 }
 
 static void test_node_mod_alternate(LTree *test_tree){
@@ -135,6 +138,9 @@ static void test_node_mod_alternate(LTree *test_tree){
     printf("\tnew leaf node index: passed\n");
     assert(find_node_by_index(test_tree,6)->depth == 2);
     printf("\tnew leaf depth: passed\n");
+    assert(test_tree->height == 3);
+    printf("\tTree height: passed\n");
+
 }
 
 static void test_node_mod_alternate2(LTree *test_tree){
@@ -147,6 +153,8 @@ static void test_node_mod_alternate2(LTree *test_tree){
     alternate_operator(test_tree, 3, AND);
     assert(find_node_by_index(test_tree,3)->type == AND);
     printf("\ttest node type AND: passed\n");
+    assert(test_tree->height == 3);
+    printf("\tTree height: passed\n");
 }
 
 static void test_node_grow_branch(LTree *test_tree){
@@ -178,9 +186,8 @@ static void test_node_grow_branch(LTree *test_tree){
     printf("\tNode 14 data_index: passed\n");
     assert(find_node_by_index(test_tree, 15)->type == ONE);
     printf("\tNode 15 type: passed\n");
-
-
-
+    assert(test_tree->height == 4);
+    printf("\tTree height: passed\n");
 }
 
 static void test_node_modification(){
