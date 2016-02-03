@@ -197,8 +197,9 @@ void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {
     recalculate_indices(tree, tree->root_node, 1);
 }
 void delete_leaf(LTree *tree, uint index) {
-    //TODO: Check if node is leaf node
     Node *leaf_to_delete = find_node_by_index(tree, index);
+    assert(leaf_to_delete->left_child == NULL && leaf_to_delete->right_child == NULL);
+
     Node *leaf_to_keep = NULL;
     if(leaf_to_delete->position == RIGHT){
         leaf_to_keep = leaf_to_delete->parent->left_child;
@@ -209,12 +210,14 @@ void delete_leaf(LTree *tree, uint index) {
         leaf_to_delete->parent->right_child = NULL;
     }
     if(leaf_to_delete->parent->position == RIGHT){
-        leaf_to_delete->parent->right_child = leaf_to_keep;
+        leaf_to_delete->parent->parent->right_child = leaf_to_keep;
     }
     else if(leaf_to_delete->parent->position == LEFT){
-        leaf_to_delete->parent->left_child = leaf_to_keep;
+        leaf_to_delete->parent->parent->left_child = leaf_to_keep;
     }
-    destroy_node(leaf_to_delete);
+    leaf_to_keep->parent = leaf_to_delete->parent->parent;
+    destroy_node(&leaf_to_delete);
+    recalculate_indices(tree, tree->root_node, 1);
 }
 
 int calculate_tree_outcome(LTree *tree, int *data_array, uint max_data_index) {

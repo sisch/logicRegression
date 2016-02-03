@@ -207,6 +207,23 @@ static void test_node_prune_branch(LTree *test_tree){
     assert(test_tree->height == 2);
     printf("\tTree height: passed\n");
 }
+static void test_node_delete_leaf(LTree *test_tree){
+    delete_leaf(test_tree, 6);
+    assert(find_node_by_index(test_tree, 6) == NULL);
+    printf("\tLeaf deleted: passed\n");
+    assert(find_node_by_index(test_tree, 3)->type == ONE);
+    printf("\tLeaf node 3 type: passed\n");
+    assert(test_tree->height == 3);
+    printf("\tLeaf delete tree height: passed\n");
+    delete_leaf(test_tree, 5);
+    assert(find_node_by_index(test_tree, 5) == NULL);
+    printf("\tLeaf deleted: passed\n");
+    assert(find_node_by_index(test_tree, 2)->type == INDEX);
+    printf("\tLeaf node 2 type: passed\n");
+    assert(test_tree->height == 2);
+    printf("\tLeaf delete tree height: passed\n");
+
+}
 
 static void test_node_modification(){
     LTree *test_tree = create_new_tree();
@@ -228,6 +245,10 @@ static void test_node_modification(){
     destroy_tree(test_tree);
     test_tree = default_tree();
     test_node_prune_branch(test_tree);
+    printf(" - Node Mod 06 : Delete Leaf\n");
+    destroy_tree(test_tree);
+    test_tree = default_tree();
+    test_node_delete_leaf(test_tree);
 }
 
 static void run_all_node_tests(){
