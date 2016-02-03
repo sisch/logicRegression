@@ -118,7 +118,6 @@ void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_
         fprintf(stderr, "No rootnode available. Create a tree first and pass the correct pointer.");
     }
 }
-
 void alternate_leaf(LTree *tree, uint index, Node *new_node) {
     //TODO: Check whether new_node is of type leaf
     assert(new_node->parent == NULL && "New leaf is not allowed to be an existing node of any tree");
@@ -137,7 +136,6 @@ void alternate_leaf(LTree *tree, uint index, Node *new_node) {
     }
     destroy_node(&old_node);
 }
-
 void alternate_operator(LTree *tree, uint index, nodeType type) {
     Node *cur_node = find_node_by_index(tree, index);
     assert(
@@ -147,7 +145,6 @@ void alternate_operator(LTree *tree, uint index, nodeType type) {
     );
     cur_node->type = type;
 }
-
 void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child) {
     Node *old_node = find_node_by_index(tree, index);
     Node *new_node = create_node(old_node->parent, new_connector, -1, old_node->position);
@@ -166,7 +163,6 @@ void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_chil
     recalculate_indices(tree,new_node, index);
     // TODO: traverse indices,depths of sub tree
 }
-
 void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {
     Node *old_node = find_node_by_index(tree, index);
     Node *new_node;
@@ -200,7 +196,6 @@ void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {
     destroy_node(&old_node);
     recalculate_indices(tree, tree->root_node, 1);
 }
-
 void delete_leaf(LTree *tree, uint index) {
     //TODO: Check if node is leaf node
     Node *leaf_to_delete = find_node_by_index(tree, index);
@@ -225,11 +220,9 @@ void delete_leaf(LTree *tree, uint index) {
 int calculate_tree_outcome(LTree *tree, int *data_array, uint max_data_index) {
     return 0;
 }
-
-int get_tree_depth(LTree *tree) {
-    return 0;
+int get_tree_height(LTree *tree) {
+    return tree->height;
 }
-
 int get_number_of_leaves(LTree *tree) {
 
     return 0;
