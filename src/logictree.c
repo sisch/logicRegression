@@ -22,7 +22,6 @@ LTree *create_new_tree(){
     t->height =1;
     return t;
 }
-
 void destroy_tree(LTree *tree) {
     if (tree != NULL) {
         if (tree->next_tree != NULL) {
@@ -31,13 +30,6 @@ void destroy_tree(LTree *tree) {
         destroy_node(&tree->root_node);
     }
     free(tree);
-}
-
-Node *copy_node(Node *src){
-    Node *dest_node = malloc(sizeof(Node));
-    memcpy(dest_node,src, sizeof(Node));
-    dest_node->parent = NULL;
-    return dest_node;
 }
 
 Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp){
@@ -67,7 +59,12 @@ Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp
     n->data_index = data_index;
     return n;
 }
-
+Node *copy_node(Node *src){
+    Node *dest_node = malloc(sizeof(Node));
+    memcpy(dest_node,src, sizeof(Node));
+    dest_node->parent = NULL;
+    return dest_node;
+}
 void destroy_node(Node **n){
     if(*n != NULL){
         if((*n)->right_child != NULL){
