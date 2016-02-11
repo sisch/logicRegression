@@ -153,7 +153,7 @@ static void test_node_mod_alternate2(LTree *test_tree){
     printf("\tTree height: passed\n");
 }
 static void test_node_grow_branch(LTree *test_tree){
-    Node *new_node = create_node(NULL, INDEX, 3, NULL);
+    Node *new_node = create_node(NULL, INDEX, 3, -1);
     grow_branch(test_tree, 3, AND, new_node);
     assert(test_tree->root_node->right_child->type == AND);
     printf("\tgrow node new type: passed\n");
@@ -276,19 +276,48 @@ static void test_tree_struct(){
     printf("\tSize tree instance: passed\n");
 }
 
-static void run_all_tree_tests(){
+static void run_initial_tree_tests(){
     printf("Testing Tree 01\n");
     test_tree_struct();
 }
 
+static void test_tree_outcome(){
+    LTree *test_tree = create_new_tree();
+    int *data_array = malloc(sizeof(int)*6);
+    data_array[0] = 1;
+    data_array[2] = 1;
+    data_array[4] = 1;
+    data_array[1] = 0;
+    data_array[3] = 0;
+    data_array[5] = 0;
+    assert(calculate_tree_outcome(test_tree->root_node, data_array, 5) == 1);
+    printf("\tNew Tree outcome: passed\n");
+    destroy_tree(test_tree);
+    test_tree = default_tree();
+    assert(calculate_tree_outcome(test_tree->root_node, data_array, 5) == 1);
+    printf("\tNew Tree outcome: passed\n");
+    destroy_tree(test_tree);
+    test_tree = default_tree();
+    Node *new_node = create_node(NULL, INDEX, 1,-1);
+    alternate_leaf(test_tree, 7, new_node);
+    assert(calculate_tree_outcome(test_tree->root_node, data_array, 5) == 0);
+    printf("\tNew Tree outcome: passed\n");
+    free(data_array);
+}
+
+static void run_all_tree_tests(){
+    printf("Testing Tree 02\n");
+    test_tree_outcome();
+}
 
 /*
  * main test invocation
  */
 int main(){
-    run_all_tree_tests();
+    run_initial_tree_tests();
     printf("\n");
     run_all_node_tests();
     printf("\n");
-
+    run_all_tree_tests();
+    printf("\n");
 }

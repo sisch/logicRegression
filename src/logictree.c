@@ -215,6 +215,7 @@ void delete_leaf(LTree *tree, uint index) {
     leaf_to_keep->parent = leaf_to_delete->parent->parent;
     destroy_node(&leaf_to_delete);
     recalculate_indices(tree, tree->root_node, 1);
+    destroy_node(&leaf_to_delete);
 }
 
 int calculate_tree_outcome(LTree *tree, int *data_array, uint max_data_index) {
