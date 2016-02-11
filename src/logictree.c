@@ -215,11 +215,27 @@ void delete_leaf(LTree *tree, uint index) {
     leaf_to_keep->parent = leaf_to_delete->parent->parent;
     destroy_node(&leaf_to_delete);
     recalculate_indices(tree, tree->root_node, 1);
-    destroy_node(&leaf_to_delete);
 }
 
-int calculate_tree_outcome(LTree *tree, int *data_array, uint max_data_index) {
-    return 0;
+int calculate_tree_outcome(Node *node, int *data_array, uint max_data_index) {
+    if (node->type == ONE){
+        return 1;
+    }
+    else if (node->type == OR){
+        return MAX(calculate_tree_outcome(node->left_child, data_array, max_data_index),
+                   calculate_tree_outcome(node->right_child, data_array, max_data_index));
+    }
+    else if (node->type == AND){
+        return MIN(calculate_tree_outcome(node->left_child, data_array, max_data_index),
+                   calculate_tree_outcome(node->right_child, data_array, max_data_index));
+    }
+    else if (node->type == INDEX && node->data_index <= max_data_index){
+        return data_array[node->data_index];
+    }
+    else if (node->type == INDEX_COMPLEMENT && node->data_index <= max_data_index){
+        return (data_array[node->data_index]+1) % 2;
+    }
+    return -1;
 }
 int get_tree_height(LTree *tree) {
     return tree->height;
