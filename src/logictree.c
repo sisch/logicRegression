@@ -31,6 +31,16 @@ void destroy_tree(LTree *tree) {
     }
     free(tree);
 }
+LTree *add_tree(LTree *root_tree){
+    LTree *cur_tree = root_tree;
+    while(cur_tree->next_tree != NULL)
+    {
+        cur_tree=cur_tree->next_tree;
+    }
+    LTree *new_tree = create_new_tree();
+    cur_tree->next_tree = new_tree;
+    return new_tree;
+}
 
 Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp){
     //TODO: adjust tree height when creating node

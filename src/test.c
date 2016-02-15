@@ -304,9 +304,20 @@ static void test_tree_outcome(){
     free(data_array);
 }
 
+static void test_tree_operations() {
+    LTree *test_tree = default_tree();
+    LTree *new_tree = add_tree(test_tree);
+    assert(test_tree->next_tree == new_tree);
+    printf("\tadd 2nd tree: passed\n");
+    new_tree = add_tree(new_tree);
+    assert(test_tree->next_tree->next_tree == new_tree);
+    printf("\tadd 3rd tree: passed\n");
+}
 static void run_all_tree_tests(){
     printf("Testing Tree 02\n");
     test_tree_outcome();
+    printf("Testing Tree 03\n");
+    test_tree_operations();
 }
 
 /*
