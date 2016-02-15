@@ -22,12 +22,19 @@ LTree *create_new_tree(){
     t->height =1;
     return t;
 }
-void destroy_tree(LTree *tree) {
+void destroy_tree(LTree *tree, bool include_subsequent) {
     if (tree != NULL) {
         if (tree->next_tree != NULL) {
-            destroy_tree(tree->next_tree);
+            if (include_subsequent == true) {
+                destroy_tree(tree->next_tree, true);
+                destroy_node(&tree->root_node);
+            }
+            else {
+                //TODO: find a way to link tree->parent->next_tree to tree->next_tree and then delete tree
+                // possibility 1: making LTree double linked list
+                // possibility 2: looping through number of trees (no problem if limited, like in publication)
+            }
         }
-        destroy_node(&tree->root_node);
     }
     free(tree);
 }

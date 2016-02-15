@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <stdbool.h>
 #include "main.h"
 #include "logictree.h"
 #include "helpers.h"
@@ -27,6 +28,6 @@ void testTrees(){
     assert(list_of_trees->root_node->right_child->type == OR);
     assert(list_of_trees->root_node->left_child->data_index == 4);
 
-    print_tree(list_of_trees->root_node);
-    destroy_tree(list_of_trees);
+    print_tree(list_of_trees);
+    destroy_tree(list_of_trees, true);
 }
