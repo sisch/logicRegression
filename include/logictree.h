@@ -2,6 +2,7 @@
 // Last change 2015-09-08
 /** @file */
 #include <zconf.h>
+#include <stdbool.h>
 
 #ifndef LOGICREGRESSION_LOGICTREE_H
 #define LOGICREGRESSION_LOGICTREE_H
