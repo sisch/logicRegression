@@ -289,17 +289,17 @@ static void test_tree_outcome(){
     data_array[1] = 0;
     data_array[3] = 0;
     data_array[5] = 0;
-    assert(calculate_tree_outcome(test_tree->root_node, data_array, 5) == 1);
+    assert(calculate_subtree_outcome(test_tree->root_node, data_array, 5) == 1);
     printf("\tNew Tree ONE outcome: passed\n");
     destroy_tree(test_tree, true);
     test_tree = default_tree();
-    assert(calculate_tree_outcome(test_tree->root_node, data_array, 5) == 1);
+    assert(calculate_subtree_outcome(test_tree->root_node, data_array, 5) == 1);
     printf("\tNew Tree positive outcome: passed\n");
     destroy_tree(test_tree, true);
     test_tree = default_tree();
     Node *new_node = create_node(NULL, INDEX, 1,-1);
     alternate_leaf(test_tree, 7, new_node);
-    assert(calculate_tree_outcome(test_tree->root_node, data_array, 5) == 0);
+    assert(calculate_subtree_outcome(test_tree->root_node, data_array, 5) == 0);
     printf("\tNew Tree negative outcome: passed\n");
     free(data_array);
 }

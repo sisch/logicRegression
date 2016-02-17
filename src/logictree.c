@@ -10,8 +10,8 @@
 
 #define MAX(a,b) ((a) > (b) ? a : b)
 #define MIN(a,b) ((a) < (b) ? a : b)
-bool is_bit_set(uint index, uint position){
-    return (index >> position & 0b1) == 0b1;
+bool is_bit_set(uint number, uint position){
+    return (number >> position & 0b1) == 0b1;
 }
 
 LTree *create_new_tree(){
@@ -76,12 +76,6 @@ Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp
     n->data_index = data_index;
     return n;
 }
-Node *copy_node(Node *src){
-    Node *dest_node = malloc(sizeof(Node));
-    memcpy(dest_node,src, sizeof(Node));
-    dest_node->parent = NULL;
-    return dest_node;
-}
 void destroy_node(Node **n){
     if(*n != NULL){
         if((*n)->right_child != NULL){
@@ -104,17 +98,6 @@ void destroy_node(Node **n){
 }
 
 void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_data_index, nodeType new_child_type){
-    /*Node *cur_node = tree->root_node;
-    // Node index in bitwise comparison is 1: right child node; 0: left child node
-    for ( uint i = tree->height - 1; i > 0;i--){
-        if (is_bit_set(index, i)){
-            cur_node = cur_node->left_child;
-        }
-        else {
-            cur_node = cur_node->right_child;
-        }
-    }
-*/
     Node *cur_node = find_node_by_index(tree, index);
     // At the specified node:
     // Create a copy as right child node
@@ -234,34 +217,6 @@ void delete_leaf(LTree *tree, uint index) {
     recalculate_indices(tree, tree->root_node, 1);
 }
 
-int calculate_tree_outcome(Node *node, int *data_array, uint max_data_index) {
-    if (node->type == ONE){
-        return 1;
-    }
-    else if (node->type == OR){
-        return MAX(calculate_tree_outcome(node->left_child, data_array, max_data_index),
-                   calculate_tree_outcome(node->right_child, data_array, max_data_index));
-    }
-    else if (node->type == AND){
-        return MIN(calculate_tree_outcome(node->left_child, data_array, max_data_index),
-                   calculate_tree_outcome(node->right_child, data_array, max_data_index));
-    }
-    else if (node->type == INDEX && node->data_index <= max_data_index){
-        return data_array[node->data_index];
-    }
-    else if (node->type == INDEX_COMPLEMENT && node->data_index <= max_data_index){
-        return (data_array[node->data_index]+1) % 2;
-    }
-    return -1;
-}
-int get_tree_height(LTree *tree) {
-    return tree->height;
-}
-int get_number_of_leaves(LTree *tree) {
-
-    return 0;
-}
-
 Node* find_node_by_index(LTree *tree, uint node_index) {
     uint current_bit_mask = 1;
     for (int i = 1; i < (sizeof(uint)*8); i++){
@@ -290,7 +245,6 @@ Node* find_node_by_index(LTree *tree, uint node_index) {
     }
     return current_node;
 }
-
 void recalculate_indices(LTree *tree, Node *root_node, uint index_of_root) {
     if(root_node!=NULL) {
         root_node->node_index = index_of_root;
@@ -309,4 +263,25 @@ void recalculate_indices(LTree *tree, Node *root_node, uint index_of_root) {
             recalculate_indices(tree, root_node->right_child, index_of_root * 2 + 1);
         }
     }
+}
+
+int calculate_subtree_outcome(Node *node, int *data_array, uint max_data_index) {
+    if (node->type == ONE){
+        return 1;
+    }
+    else if (node->type == OR){
+        return MAX(calculate_subtree_outcome(node->left_child, data_array, max_data_index),
+                   calculate_subtree_outcome(node->right_child, data_array, max_data_index));
+    }
+    else if (node->type == AND){
+        return MIN(calculate_subtree_outcome(node->left_child, data_array, max_data_index),
+                   calculate_subtree_outcome(node->right_child, data_array, max_data_index));
+    }
+    else if (node->type == INDEX && node->data_index <= max_data_index){
+        return data_array[node->data_index];
+    }
+    else if (node->type == INDEX_COMPLEMENT && node->data_index <= max_data_index){
+        return (data_array[node->data_index]+1) % 2;
+    }
+    return -1;
 }

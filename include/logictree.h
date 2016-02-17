@@ -63,14 +63,11 @@ LTree *create_new_tree();
 LTree *add_tree(LTree *root_tree);
 Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp);
 Node *find_node_by_index(LTree *tree, uint node_index);
-Node *copy_node(Node *src);
 void destroy_tree(LTree *tree, bool include_subsequent);
 void destroy_node(Node **node);
 
 // arithmetic tree output
-int get_tree_height(LTree *tree);
-int calculate_tree_outcome(Node *node, int *data_array, uint max_data_index);
-int get_number_of_leaves(LTree *tree);
+int calculate_subtree_outcome(Node *node, int *data_array, uint max_data_index);
 void recalculate_indices(LTree *tree, Node *root_node, uint index_of_root);
 
 #endif //LOGICREGRESSION_LOGICTREE_H
