@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.3)
 project(logicRegression)
 
+include_directories(./include)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -DDEBUG -std=c11")
 
-set(SOURCE_FILES src/main.c include/main.h src/logictree.c include/logictree.h src/helpers.c include/helpers.h)
-
-include_directories(./include)
-
+set(SOURCE_FILES src/main.c src/logictree.c src/helpers.c src/model.c)
 add_executable(logicRegression ${SOURCE_FILES})
 
-set(SOURCE_TEST src/logictree.c include/logictree.h src/helpers.c include/helpers.h src/test.c)
+set(SOURCE_TEST src/logictree.c src/helpers.c src/test.c src/model.c)
 add_executable(test_logicregression ${SOURCE_TEST})
