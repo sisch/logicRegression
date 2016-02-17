@@ -1,12 +1,14 @@
 //
 //
 // test.c
+#include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
-#include "logictree.h"
 #include <stdio.h>
+#include <malloc.h>
 #include "helpers.h"
-#include <stdlib.h>
+#include "logictree.h"
+#include "model.h"
 
 LTree *default_tree(){
     LTree *new_tree = create_new_tree();
@@ -14,6 +16,18 @@ LTree *default_tree(){
     split_leaf(new_tree, 2, AND, 5, INDEX);
     split_leaf(new_tree, 3, OR, 2, INDEX_COMPLEMENT);
     return new_tree;
+}
+
+int *data_array;
+
+static void initialize(){
+    data_array = malloc(sizeof(int)*6);
+    data_array[0] = 1;
+    data_array[2] = 1;
+    data_array[4] = 1;
+    data_array[1] = 0;
+    data_array[3] = 0;
+    data_array[5] = 0;
 }
 
 static void test_node_creation(){
@@ -282,13 +296,6 @@ static void run_initial_tree_tests(){
 
 static void test_tree_outcome(){
     LTree *test_tree = create_new_tree();
-    int *data_array = malloc(sizeof(int)*6);
-    data_array[0] = 1;
-    data_array[2] = 1;
-    data_array[4] = 1;
-    data_array[1] = 0;
-    data_array[3] = 0;
-    data_array[5] = 0;
     assert(calculate_subtree_outcome(test_tree->root_node, data_array, 5) == 1);
     printf("\tNew Tree ONE outcome: passed\n");
     destroy_tree(test_tree, true);
@@ -320,14 +327,38 @@ static void run_all_tree_tests(){
     test_tree_operations();
 }
 
+static void run_model_creation(){
+    Model *test_model = new_model();
+    assert(test_model!=NULL);
+    printf("\tModel creation: passed\n");
+    assert(sizeof(*test_model) == 32);
+    printf("\tModel allocated memory: passed\n");
+    assert(test_model->first_tree != NULL);
+    printf("\tModel initial tree creation: passed\n");
+    assert(test_model->last_tree == test_model->first_tree);
+    printf("\tModel initial tree creation: passed\n");
+    assert(calculate_subtree_outcome(test_model->first_tree->root_node,data_array,5) == 1);
+    printf("\tModel initial tree outcome: passed\n");
+
+}
+static void run_all_model_tests(){
+    printf("Testing Model 01\n");
+    run_model_creation();
+
+}
+
 /*
  * main test invocation
  */
 int main(){
+    initialize();
     run_initial_tree_tests();
     printf("\n");
     run_all_node_tests();
     printf("\n");
     run_all_tree_tests();
+    printf("\n");
+
+    run_all_model_tests();
     printf("\n");
 }
