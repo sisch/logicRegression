@@ -308,7 +308,7 @@ static void test_tree_outcome(){
     alternate_leaf(test_tree, 7, new_node);
     assert(calculate_subtree_outcome(test_tree->root_node, data_array, 5) == 0);
     printf("\tNew Tree negative outcome: passed\n");
-    free(data_array);
+    ///free(data_array);
 }
 
 static void test_tree_operations() {
@@ -328,10 +328,10 @@ static void run_all_tree_tests(){
 }
 
 static void run_model_creation(){
-    Model *test_model = new_model();
+    Model *test_model = new_model(data_array,6);
     assert(test_model!=NULL);
     printf("\tModel creation: passed\n");
-    assert(sizeof(*test_model) == 32);
+    assert(sizeof(*test_model) == 48);
     printf("\tModel allocated memory: passed\n");
     assert(test_model->first_tree != NULL);
     printf("\tModel initial tree creation: passed\n");
@@ -339,6 +339,17 @@ static void run_model_creation(){
     printf("\tModel initial tree creation: passed\n");
     assert(calculate_subtree_outcome(test_model->first_tree->root_node,data_array,5) == 1);
     printf("\tModel initial tree outcome: passed\n");
+    assert(calculate_model(test_model)==0);
+    printf("\tModel all coefficients 0: passed\n");
+    test_model->coefficient_array[0]=1;
+    test_model->coefficient_array[1]=1;
+    test_model->coefficient_array[2]=1;
+    assert(calculate_model(test_model)==2);
+    printf("\tModel one tree all coefficients 1: passed\n");
+    test_model->last_tree = add_tree(test_model->first_tree);
+    assert(calculate_model(test_model)==3);
+    printf("\tModel two trees all coefficients 1: passed\n");
+
 
 }
 static void run_all_model_tests(){
