@@ -20,6 +20,7 @@ LTree *create_new_tree(){
     t->root_node = create_node(NULL,ONE, -1, RIGHT);
     t->root_node->node_index = 1;
     t->height =1;
+    t->binary_outcome = 1;
     return t;
 }
 void destroy_tree(LTree *tree, bool include_subsequent) {

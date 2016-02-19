@@ -42,6 +42,7 @@ struct logicTree {
     Node *root_node;
     LTree *next_tree;
     uint height;
+    int binary_outcome;
 };
 
 // Allowed set of moves to alter a tree

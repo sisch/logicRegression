@@ -281,7 +281,7 @@ static void run_all_node_tests(){
  *
  */
 static void test_tree_struct(){
-    assert(sizeof(LTree) == 24);
+    assert(sizeof(LTree) == sizeof(LTree*) + sizeof(Node*) + sizeof(uint) + sizeof(int));
     printf("\tStruct Size: passed\n");
     assert(create_new_tree() != NULL);
     printf("\tCreate new tree: passed\n");
