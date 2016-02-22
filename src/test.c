@@ -5,23 +5,16 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <malloc.h>
 #include "helpers.h"
 #include "logictree.h"
 #include "model.h"
 
-LTree *default_tree(){
-    LTree *new_tree = create_new_tree();
-    split_leaf(new_tree, 1, OR, -1, ONE);
-    split_leaf(new_tree, 2, AND, 5, INDEX);
-    split_leaf(new_tree, 3, OR, 2, INDEX_COMPLEMENT);
-    return new_tree;
-}
-
 int *data_array;
+uint data_array_length = 6;
+uint data_max_index = 5;
 
 static void initialize(){
-    data_array = malloc(sizeof(int)*6);
+    data_array = malloc(sizeof(int)*data_array_length);
     data_array[0] = 1;
     data_array[2] = 1;
     data_array[4] = 1;
@@ -29,10 +22,15 @@ static void initialize(){
     data_array[3] = 0;
     data_array[5] = 0;
 }
+LTree *default_tree(){
+    LTree *new_tree = create_new_tree(data_array, data_max_index);
+    split_leaf(new_tree, 1, OR, -1, ONE);
+    split_leaf(new_tree, 2, AND, 5, INDEX);
+    split_leaf(new_tree, 3, OR, 2, INDEX_COMPLEMENT);
+    return new_tree;
+}
 
 static void test_node_creation(){
-    assert(sizeof(Node) == 48);
-    printf("\tStruct Size: passed\n");
     assert(create_node(NULL,-1,-1,-1) != NULL);
     printf("\tNew node: passed\n");
     Node* testnode = create_node(NULL,ONE,-1,LEFT);
@@ -208,7 +206,7 @@ static void test_node_prune_branch(LTree *test_tree){
     assert(test_tree->height == 2);
     printf("\tTree height: passed\n");
     // test prune root_node as well
-    test_tree = create_new_tree();
+    test_tree = create_new_tree(data_array, data_max_index);
     split_leaf(test_tree, 1, OR, -1, ONE);
     split_leaf(test_tree, 3, OR, 2, INDEX_COMPLEMENT);
     prune_branch(test_tree,1,LEFT);
@@ -239,7 +237,7 @@ static void test_node_delete_leaf(LTree *test_tree){
 }
 
 static void test_node_modification(){
-    LTree *test_tree = create_new_tree();
+    LTree *test_tree = create_new_tree(data_array, data_max_index);
     printf(" - Node Mod 01 : Split Leaf\n");
     test_node_mod_split(test_tree);
     printf(" - Node Mod 02 : Alternate Leaf\n");
@@ -281,11 +279,9 @@ static void run_all_node_tests(){
  *
  */
 static void test_tree_struct(){
-    assert(sizeof(LTree) == sizeof(LTree*) + sizeof(Node*) + sizeof(uint) + sizeof(int));
-    printf("\tStruct Size: passed\n");
-    assert(create_new_tree() != NULL);
+    assert(create_new_tree(data_array, data_max_index) != NULL);
     printf("\tCreate new tree: passed\n");
-    assert(sizeof(*create_new_tree()) == 24);
+    assert(sizeof(*create_new_tree(data_array, data_max_index)) == sizeof(LTree));
     printf("\tSize tree instance: passed\n");
 }
 
@@ -295,18 +291,18 @@ static void run_initial_tree_tests(){
 }
 
 static void test_tree_outcome(){
-    LTree *test_tree = create_new_tree();
-    assert(calculate_subtree_outcome(test_tree->root_node, data_array, 5) == 1);
+    LTree *test_tree = create_new_tree(data_array, data_max_index);
+    assert(calculate_subtree_outcome(test_tree->root_node) == 1);
     printf("\tNew Tree ONE outcome: passed\n");
     destroy_tree(test_tree, true);
     test_tree = default_tree();
-    assert(calculate_subtree_outcome(test_tree->root_node, data_array, 5) == 1);
+    assert(calculate_subtree_outcome(test_tree->root_node) == 1);
     printf("\tNew Tree positive outcome: passed\n");
     destroy_tree(test_tree, true);
     test_tree = default_tree();
     Node *new_node = create_node(NULL, INDEX, 1,-1);
     alternate_leaf(test_tree, 7, new_node);
-    assert(calculate_subtree_outcome(test_tree->root_node, data_array, 5) == 0);
+    assert(calculate_subtree_outcome(test_tree->root_node) == 0);
     printf("\tNew Tree negative outcome: passed\n");
     ///free(data_array);
 }
@@ -337,17 +333,18 @@ static void run_model_creation(){
     printf("\tModel initial tree creation: passed\n");
     assert(test_model->last_tree == test_model->first_tree);
     printf("\tModel initial tree creation: passed\n");
-    assert(calculate_subtree_outcome(test_model->first_tree->root_node,data_array,5) == 1);
+    assert(calculate_subtree_outcome(test_model->first_tree->root_node) == 1);
     printf("\tModel initial tree outcome: passed\n");
-    assert(calculate_model(test_model)==0);
+    float result = calculate_model(test_model);
+    assert(result<=0.000000001);
     printf("\tModel all coefficients 0: passed\n");
     test_model->coefficient_array[0]=1;
     test_model->coefficient_array[1]=1;
     test_model->coefficient_array[2]=1;
-    assert(calculate_model(test_model)==2);
+    assert(calculate_model(test_model)<=2.000000001&&calculate_model(test_model)>=1.999999999);
     printf("\tModel one tree all coefficients 1: passed\n");
     test_model->last_tree = add_tree(test_model->first_tree);
-    assert(calculate_model(test_model)==3);
+    assert(calculate_model(test_model)<=3.000000001&&calculate_model(test_model)>=2.999999999);
     printf("\tModel two trees all coefficients 1: passed\n");
 
 

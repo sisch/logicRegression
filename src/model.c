@@ -6,9 +6,9 @@
 #include <string.h>
 #include "model.h"
 
-Model *new_model(int *data_arr, int data_arr_length) {
+Model *new_model(int *data_arr, uint data_arr_length) {
     Model *model1 = (Model *)malloc(sizeof(Model));
-    model1->first_tree = create_new_tree();
+    model1->first_tree = create_new_tree(data_arr, data_arr_length);
     model1->last_tree = model1->first_tree;
     model1->number_of_trees = 1;
     model1->coefficient_array = (float *)malloc(sizeof(float)*model1->number_of_trees+1);
@@ -24,7 +24,7 @@ float calculate_model(Model *model1) {
     LTree *cur_tree = model1->first_tree;
     while(cur_tree != NULL) {
         // 1-dimensional data only, for the moment
-        result += model1->coefficient_array[tree_num]*calculate_subtree_outcome(cur_tree->root_node, model1->data_array, (uint)model1->data_array_length);
+        result += model1->coefficient_array[tree_num]*cur_tree->binary_outcome;
         tree_num++;
         cur_tree = cur_tree->next_tree;
     }

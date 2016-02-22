@@ -17,7 +17,7 @@ struct model {
     int data_array_length;
 };
 
-Model *new_model(int *data_arr, int data_arr_length);
+Model *new_model(int *data_arr, uint data_arr_length);
 float calculate_model(Model *model1);
 
 #endif //LOGICREGRESSION_MODEL_H
