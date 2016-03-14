@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
 #include "helpers.h"
 #include "logictree.h"
 #include "model.h"
@@ -28,6 +29,15 @@ LTree *default_tree(){
     split_leaf(new_tree, 2, AND, 5, INDEX);
     split_leaf(new_tree, 3, OR, 2, INDEX_COMPLEMENT);
     return new_tree;
+}
+
+Model *new_test_model(){
+    Model *model1 = new_model(data_array, data_array_length);
+    model_add_tree(model1, 0.5f);
+    split_leaf(model1->last_tree, 1, OR, -1, ONE);
+    split_leaf(model1->last_tree, 2, AND, 5, INDEX);
+    split_leaf(model1->last_tree, 3, OR, 2, INDEX_COMPLEMENT);
+    return model1;
 }
 
 static void test_node_creation(){
@@ -343,10 +353,16 @@ static void run_model_creation(){
     test_model->coefficient_array[2]=1;
     assert(calculate_model(test_model)<=2.000000001&&calculate_model(test_model)>=1.999999999);
     printf("\tModel one tree all coefficients 1: passed\n");
-    test_model->last_tree = add_tree(test_model->first_tree);
-    assert(calculate_model(test_model)<=3.000000001&&calculate_model(test_model)>=2.999999999);
+    test_model = model_add_tree(test_model, 1.0f);
+    result = calculate_model(test_model);
+    assert(result<=3.000000001&&result>=2.999999999);
     printf("\tModel two trees all coefficients 1: passed\n");
-
+    test_model = new_test_model();
+    test_model->coefficient_array[0]=0.25;
+    test_model->coefficient_array[1]=0.3;
+    result =(float) (((int)(calculate_model(test_model)*1000))/1000.0f);
+    assert(result > 1.0499 && result < 1.0501);
+    printf("\tModel two trees fractional coefficients: passed\n");
 
 }
 static void run_all_model_tests(){
