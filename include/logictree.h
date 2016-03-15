@@ -12,26 +12,34 @@ typedef struct logicTree LTree;
 /**
  * nodeType
  */
-typedef enum nodeType {AND, OR, INDEX, INDEX_COMPLEMENT, ONE} nodeType;
+typedef enum nodeType { AND, OR, INDEX, INDEX_COMPLEMENT, ONE } nodeType;
 /**
  * childPosition
  */
-typedef enum childPosition {LEFT, RIGHT} childPosition;
+typedef enum childPosition { LEFT, RIGHT } childPosition;
 /* node contains the values and boolean operators in a logicTree
  *
  * Besides holding values or boolean connectors, the hierarchy of the logic tree is resembled by having pointers
  * to up to two child elements and one parent element.
  */
 struct node {
-    nodeType type;          /**< #nodeType identifier*/
-    Node *left_child;       /**< pointer to the left child #node */
-    Node *right_child;      /**< pointer to the right child #node */
-    Node *parent;           /**< pointer to the parent #node */
-    uint depth;             /**< The depth of a node is defined as distance to the root node */
-    uint node_index;        /**< A unique numeric index within the logicTree */
-    uint data_index;        /**< A numeric index denoting the position of input data in the input array. */
-    childPosition position; /**< The #childPosition in a logicTree as seen from the parent node */
-    LTree *base_tree;
+  nodeType type;
+  /**< #nodeType identifier*/
+  Node *left_child;
+  /**< pointer to the left child #node */
+  Node *right_child;
+  /**< pointer to the right child #node */
+  Node *parent;
+  /**< pointer to the parent #node */
+  uint depth;
+  /**< The depth of a node is defined as distance to the root node */
+  uint node_index;
+  /**< A unique numeric index within the logicTree */
+  uint data_index;
+  /**< A numeric index denoting the position of input data in the input array. */
+  childPosition position;
+  /**< The #childPosition in a logicTree as seen from the parent node */
+  LTree *base_tree;
 };
 /* logicTree represents a hierarchical binary tree with nodes containing either a data index or a boolean connector
  *
@@ -40,12 +48,12 @@ struct node {
  * and an unsigned integer representing the height of the tree (i.e. max distance to ANY leaf node)
  */
 struct logicTree {
-    Node *root_node;
-    LTree *next_tree;
-    uint height;
-    int binary_outcome;
-    int *data_array;
-    uint max_data_index;
+  Node *root_node;
+  LTree *next_tree;
+  uint height;
+  int binary_outcome;
+  int *data_array;
+  uint max_data_index;
 };
 
 // Allowed set of moves to alter a tree
@@ -56,14 +64,15 @@ struct logicTree {
  * undefined behavior, though.
  */
 void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_data_index, nodeType new_child_type);
-void alternate_leaf(LTree *tree, uint index, Node *new_node); // 3rd parameter could also be a new value of dataIndex only
+void alternate_leaf
+    (LTree *tree, uint index, Node *new_node); // 3rd parameter could also be a new value of dataIndex only
 void alternate_operator(LTree *tree, uint index, nodeType type);
 void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child);
 void prune_branch(LTree *tree, uint index, childPosition delete_child_at);
 void delete_leaf(LTree *tree, uint index);
 
 // Other tree operations
-LTree *create_new_tree(int* data_array, uint max_data_index);
+LTree *create_new_tree(int *data_array, uint max_data_index);
 LTree *add_tree(LTree *root_tree);
 Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp);
 Node *find_node_by_index(LTree *tree, uint node_index);

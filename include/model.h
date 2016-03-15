@@ -9,12 +9,12 @@
 
 typedef struct model Model;
 struct model {
-    int number_of_trees;
-    LTree *first_tree;
-    LTree *last_tree;
-    float *coefficient_array;
-    int *data_array;
-    int data_array_length;
+  int number_of_trees;
+  LTree *first_tree;
+  LTree *last_tree;
+  float *coefficient_array;
+  int *data_array;
+  int data_array_length;
 };
 
 Model *new_model(int *data_arr, uint data_arr_length);

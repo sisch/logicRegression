@@ -5,6 +5,6 @@
 
 #ifndef LOGICREGRESSION_HELPERS_H
 #define LOGICREGRESSION_HELPERS_H
-void print_tree(LTree*);
-void print_subtree(Node*);
+void print_tree(LTree *);
+void print_subtree(Node *);
 #endif //LOGICREGRESSION_HELPERS_H
