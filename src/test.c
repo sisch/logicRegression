@@ -43,7 +43,7 @@ LTree *default_tree() {
 }
 
 Model *new_test_model() {
-  Model *model1 = new_model(data_array, data_array_length);
+  Model *model1 = new_model(list_of_data_arrays, data_array_length, 2);
   model_add_tree(model1, 0.5f);
   split_leaf(model1->last_tree, 1, OR, -1, ONE);
   split_leaf(model1->last_tree, 2, AND, 5, INDEX);
@@ -345,7 +345,7 @@ static void run_all_tree_tests() {
 }
 
 static void run_model_creation() {
-  Model *test_model = new_model(data_array, 6);
+  Model *test_model = new_model(list_of_data_arrays, 6, 2);
   assert(test_model != NULL);
   printf("\tModel creation: passed\n");
   assert(sizeof(*test_model) == 48);
@@ -356,25 +356,25 @@ static void run_model_creation() {
   printf("\tModel initial tree creation: passed\n");
   assert(calculate_subtree_outcome(test_model->first_tree->root_node, 0) == 1);
   printf("\tModel initial tree outcome: passed\n");
-  float result = calculate_model(test_model);
-  assert(result <= 0.000000001);
+  float *result = calculate_model(test_model);
+  assert(result[0] <= 0.000000001);
   printf("\tModel all coefficients 0: passed\n");
   test_model->coefficient_array[0] = 1;
   test_model->coefficient_array[1] = 1;
   test_model->coefficient_array[2] = 1;
-  assert(calculate_model(test_model) <= 2.000000001 && calculate_model(test_model) >= 1.999999999);
+  assert(calculate_model(test_model)[0] <= 2.000000001 && calculate_model(test_model)[0] >= 1.999999999);
   printf("\tModel one tree all coefficients 1: passed\n");
   test_model = model_add_tree(test_model, 1.0f);
   result = calculate_model(test_model);
-  assert(result <= 3.000000001 && result >= 2.999999999);
+  assert(result[0] <= 3.000000001 && result[0] >= 2.999999999);
   printf("\tModel two trees all coefficients 1: passed\n");
   test_model = new_test_model();
   test_model->coefficient_array[0] = 0.25;
   test_model->coefficient_array[1] = 0.3;
-  result = (float) (((int) (calculate_model(test_model) * 1000)) / 1000.0f);
-  assert(result > 1.0499 && result < 1.0501);
+  result = calculate_model(test_model);
+  float testval = result[0];
+  assert(testval > 1.0499 && testval < 1.0501);
   printf("\tModel two trees fractional coefficients: passed\n");
-
 }
 static void run_all_model_tests() {
   printf("Testing Model 01\n");

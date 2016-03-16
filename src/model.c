@@ -6,7 +6,7 @@
 #include <string.h>
 #include "model.h"
 
-Model *new_model(int **data_array_list, uint data_arr_length) {
+Model *new_model(int **data_array_list, uint data_arr_length, uint data_array_list_length) {
   Model *model1 = (Model *) malloc(sizeof(Model));
   model1->first_tree = create_new_tree(data_array_list, data_arr_length - 1);
   model1->last_tree = model1->first_tree;
@@ -15,6 +15,7 @@ Model *new_model(int **data_array_list, uint data_arr_length) {
   memset(model1->coefficient_array, 0, sizeof(float) * (model1->number_of_trees + 1));
   model1->data_array = data_array_list;
   model1->data_array_length = data_arr_length;
+  model1->data_array_list_length = data_array_list_length;
   return model1;
 }
 
@@ -31,15 +32,21 @@ Model *model_add_tree(Model *model1, float coefficient) {
   return model1;
 }
 
-float calculate_model(Model *model1) {
-  int tree_num = 1;
-  float result = model1->coefficient_array[0];
-  LTree *cur_tree = model1->first_tree;
-  while (tree_num <= model1->number_of_trees) {
-    // 1-dimensional data only, for the moment
-    result += model1->coefficient_array[tree_num] * cur_tree->binary_outcome;
-    tree_num++;
-    cur_tree = cur_tree->next_tree;
+float *calculate_model(Model *model1) {
+  float *result = malloc(sizeof(float)*model1->data_array_list_length);
+  for(int i = 0; i<model1->data_array_list_length;i++) {
+    result[i] = model1->coefficient_array[0];
+  }
+  for(uint dataset_id=0;dataset_id<model1->data_array_list_length;dataset_id++) {
+    LTree *cur_tree = model1->first_tree;
+    int tree_num = 1;
+    while (tree_num <= model1->number_of_trees) {
+      // 1-dimensional data only, for the moment
+      cur_tree->binary_outcome = calculate_subtree_outcome(cur_tree->root_node, dataset_id);
+      result[dataset_id] += model1->coefficient_array[tree_num] * cur_tree->binary_outcome;
+      tree_num++;
+      cur_tree = cur_tree->next_tree;
+    }
   }
   return result;
 }
