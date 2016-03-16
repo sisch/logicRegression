@@ -52,7 +52,7 @@ struct logicTree {
   LTree *next_tree;
   uint height;
   int binary_outcome;
-  int *data_array;
+  int **list_of_data_arrays;
   uint max_data_index;
 };
 
@@ -72,7 +72,7 @@ void prune_branch(LTree *tree, uint index, childPosition delete_child_at);
 void delete_leaf(LTree *tree, uint index);
 
 // Other tree operations
-LTree *create_new_tree(int *data_array, uint max_data_index);
+LTree *create_new_tree(int **data_array_list, uint max_data_index);
 LTree *add_tree(LTree *root_tree);
 Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp);
 Node *find_node_by_index(LTree *tree, uint node_index);
@@ -80,7 +80,7 @@ void destroy_tree(LTree *tree, bool include_subsequent);
 void destroy_node(Node **node);
 
 // arithmetic tree output
-int calculate_subtree_outcome(Node *node);
+int calculate_subtree_outcome(Node *node, uint dataset_id);
 void recalculate_indices(LTree *tree, Node *root_node, uint index_of_root);
 
 #endif //LOGICREGRESSION_LOGICTREE_H

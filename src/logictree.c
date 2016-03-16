@@ -13,7 +13,7 @@ bool is_bit_set(uint number, uint position) {
   return (number >> position & 0b1) == 0b1;
 }
 
-LTree *create_new_tree(int *data_array, uint max_data_index) {
+LTree *create_new_tree(int **data_array_list, uint max_data_index) {
   LTree *t = malloc(sizeof(LTree));
   t->next_tree = NULL;
   t->root_node = create_node(NULL, ONE, -1, RIGHT);
@@ -21,7 +21,7 @@ LTree *create_new_tree(int *data_array, uint max_data_index) {
   t->root_node->base_tree = t;
   t->height = 1;
   t->binary_outcome = 1;
-  t->data_array = data_array;
+  t->list_of_data_arrays = data_array_list;
   t->max_data_index = max_data_index;
   return t;
 }
@@ -46,7 +46,7 @@ LTree *add_tree(LTree *root_tree) {
   while (cur_tree->next_tree != NULL) {
     cur_tree = cur_tree->next_tree;
   }
-  LTree *new_tree = create_new_tree(root_tree->data_array, root_tree->max_data_index);
+  LTree *new_tree = create_new_tree(root_tree->list_of_data_arrays, root_tree->max_data_index);
   cur_tree->next_tree = new_tree;
   return new_tree;
 }
@@ -269,23 +269,23 @@ void recalculate_indices(LTree *tree, Node *root_node, uint index_of_root) {
   }
 }
 
-int calculate_subtree_outcome(Node *node) {
+int calculate_subtree_outcome(Node *node, uint dataset_id) {
   if (node->type == ONE) {
     return 1;
   }
   else if (node->type == OR) {
-    return MAX(calculate_subtree_outcome(node->left_child),
-               calculate_subtree_outcome(node->right_child));
+    return MAX(calculate_subtree_outcome(node->left_child, dataset_id),
+               calculate_subtree_outcome(node->right_child, dataset_id));
   }
   else if (node->type == AND) {
-    return MIN(calculate_subtree_outcome(node->left_child),
-               calculate_subtree_outcome(node->right_child));
+    return MIN(calculate_subtree_outcome(node->left_child, dataset_id),
+               calculate_subtree_outcome(node->right_child, dataset_id));
   }
   else if (node->type == INDEX && node->data_index <= node->base_tree->max_data_index) {
-    return node->base_tree->data_array[node->data_index];
+    return node->base_tree->list_of_data_arrays[dataset_id][node->data_index];
   }
   else if (node->type == INDEX_COMPLEMENT && node->data_index <= node->base_tree->max_data_index) {
-    return (node->base_tree->data_array[node->data_index] + 1) % 2;
+    return (node->base_tree->list_of_data_arrays[dataset_id][node->data_index] + 1) % 2;
   }
   return -1;
 }

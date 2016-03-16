@@ -6,14 +6,14 @@
 #include <string.h>
 #include "model.h"
 
-Model *new_model(int *data_arr, uint data_arr_length) {
+Model *new_model(int **data_array_list, uint data_arr_length) {
   Model *model1 = (Model *) malloc(sizeof(Model));
-  model1->first_tree = create_new_tree(data_arr, data_arr_length - 1);
+  model1->first_tree = create_new_tree(data_array_list, data_arr_length - 1);
   model1->last_tree = model1->first_tree;
   model1->number_of_trees = 1;
   model1->coefficient_array = (float *) malloc(sizeof(float) * model1->number_of_trees + 1);
   memset(model1->coefficient_array, 0, sizeof(float) * (model1->number_of_trees + 1));
-  model1->data_array = data_arr;
+  model1->data_array = data_array_list;
   model1->data_array_length = data_arr_length;
   return model1;
 }
