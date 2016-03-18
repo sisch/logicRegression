@@ -76,8 +76,8 @@ int **logreg_testdata() {
     int column_index = 0;
     int *dataset = malloc(sizeof(int)*NR_FEATURES);
     char * token = strtok(line, "\t");
-    printf("Bytes: %zd\n",nr_read_bytes);
-    //skip first column
+    // printf("Bytes: %zd\n",nr_read_bytes);
+    // skip first column
     token=strtok(NULL, "\t");
     while(token) {
       dataset[column_index] = atoi(token);
@@ -419,7 +419,35 @@ static void test_model_creation() {
 }
 
 static void test_fixed_model_data() {
+  Model *test_model = new_model(logreg_testdata(),20,500);
+  test_model->coefficient_array[0] = 3.0f;
+  test_model->coefficient_array[1] = 1.0f;
+  split_leaf(test_model->first_tree,1,OR,0,INDEX);
+  alternate_leaf(test_model->first_tree,3,create_node(NULL, INDEX, 1, RIGHT));
+  model_add_tree(test_model,-2.0f);
+  split_leaf(test_model->last_tree,1,OR,2,INDEX);
+  alternate_leaf(test_model->last_tree,3,create_node(NULL, INDEX, 3, RIGHT));
+  float *simulated_outcome = calculate_model(test_model);
 
+  /**
+    * for (int i=0;i < 500;i++) {
+    *   printf("%.0f\t",simulated_outcome[i]);
+    * }
+    * printf("\n");
+    **/
+  bool simulation_is_correct = true;
+  simulation_is_correct = simulation_is_correct && simulated_outcome[0] == 3;
+  simulation_is_correct = simulation_is_correct && simulated_outcome[1] == 4;
+  simulation_is_correct = simulation_is_correct && simulated_outcome[2] == 2;
+  simulation_is_correct = simulation_is_correct && simulated_outcome[3] == 4;
+  simulation_is_correct = simulation_is_correct && simulated_outcome[4] == 2;
+  simulation_is_correct = simulation_is_correct && simulated_outcome[5] == 4;
+  simulation_is_correct = simulation_is_correct && simulated_outcome[496] == 4;
+  simulation_is_correct = simulation_is_correct && simulated_outcome[497] == 4;
+  simulation_is_correct = simulation_is_correct && simulated_outcome[498] == 4;
+  simulation_is_correct = simulation_is_correct && simulated_outcome[499] == 4;
+  assert(simulation_is_correct);
+  printf("\tModel logreg.testdat: passed\n");
 }
 static void run_all_model_tests() {
   printf("Testing Model 01\n");

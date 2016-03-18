@@ -33,7 +33,7 @@ Model *model_add_tree(Model *model1, float coefficient) {
 }
 
 float *calculate_model(Model *model1) {
-  float *result = malloc(sizeof(float)*model1->data_array_list_length);
+  float *result = malloc(sizeof(float) * model1->data_array_list_length);
   for(int i = 0; i<model1->data_array_list_length;i++) {
     result[i] = model1->coefficient_array[0];
   }
@@ -42,8 +42,8 @@ float *calculate_model(Model *model1) {
     int tree_num = 1;
     while (tree_num <= model1->number_of_trees) {
       // 1-dimensional data only, for the moment
-      cur_tree->binary_outcome = calculate_subtree_outcome(cur_tree->root_node, dataset_id);
-      result[dataset_id] += model1->coefficient_array[tree_num] * cur_tree->binary_outcome;
+      int tree_outcome = calculate_subtree_outcome(cur_tree->root_node, dataset_id);
+      result[dataset_id] += model1->coefficient_array[tree_num] * tree_outcome;
       tree_num++;
       cur_tree = cur_tree->next_tree;
     }
