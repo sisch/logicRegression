@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include "helpers.h"
 #include "model.h"
 
@@ -49,6 +50,46 @@ Model *new_test_model() {
   split_leaf(model1->last_tree, 2, AND, 5, INDEX);
   split_leaf(model1->last_tree, 3, OR, 2, INDEX_COMPLEMENT);
   return model1;
+}
+
+int **logreg_testdata() {
+  FILE *fp;
+  char *line = NULL;
+  size_t line_length = 0;
+  ssize_t nr_read_bytes;
+  int nr_datasets = 0;
+  const int NR_FEATURES = 20;
+
+  fp = fopen("../data/testdata.txt","r");
+  if(fp==NULL) {
+    exit(EXIT_FAILURE);
+  }
+  while (EOF != (fscanf(fp,"%*[^\n]"), fscanf(fp,"%*c"))) {
+    nr_datasets++;
+  }
+  rewind(fp);
+
+  int **data_matrix = malloc(sizeof(int*)*nr_datasets);
+  int row_index = 0;
+
+  while((nr_read_bytes = getline(&line, &line_length,fp))!=-1) {
+    int column_index = 0;
+    int *dataset = malloc(sizeof(int)*NR_FEATURES);
+    char * token = strtok(line, "\t");
+    printf("Bytes: %zd\n",nr_read_bytes);
+    //skip first column
+    token=strtok(NULL, "\t");
+    while(token) {
+      dataset[column_index] = atoi(token);
+      column_index++;
+      token=strtok(NULL, "\t");
+    }
+    data_matrix[row_index] = dataset;
+    row_index++;
+  }
+  fclose(fp);
+  free(line);
+  return data_matrix;
 }
 
 static void test_node_creation() {
@@ -344,7 +385,7 @@ static void run_all_tree_tests() {
   test_tree_operations();
 }
 
-static void run_model_creation() {
+static void test_model_creation() {
   Model *test_model = new_model(list_of_data_arrays, 6, 2);
   assert(test_model != NULL);
   printf("\tModel creation: passed\n");
@@ -376,9 +417,15 @@ static void run_model_creation() {
   assert(testval > 1.0499 && testval < 1.0501);
   printf("\tModel two trees fractional coefficients: passed\n");
 }
+
+static void test_fixed_model_data() {
+
+}
 static void run_all_model_tests() {
   printf("Testing Model 01\n");
-  run_model_creation();
+  test_model_creation();
+  printf("Testing Model 02\n");
+  test_fixed_model_data();
 }
 
 /*
