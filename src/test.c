@@ -428,13 +428,6 @@ static void test_fixed_model_data() {
   split_leaf(test_model->last_tree,1,OR,2,INDEX);
   alternate_leaf(test_model->last_tree,3,create_node(NULL, INDEX, 3, RIGHT));
   float *simulated_outcome = calculate_model(test_model);
-
-  /**
-    * for (int i=0;i < 500;i++) {
-    *   printf("%.0f\t",simulated_outcome[i]);
-    * }
-    * printf("\n");
-    **/
   bool simulation_is_correct = true;
   simulation_is_correct = simulation_is_correct && simulated_outcome[0] == 3;
   simulation_is_correct = simulation_is_correct && simulated_outcome[1] == 4;
@@ -447,7 +440,7 @@ static void test_fixed_model_data() {
   simulation_is_correct = simulation_is_correct && simulated_outcome[498] == 4;
   simulation_is_correct = simulation_is_correct && simulated_outcome[499] == 4;
   assert(simulation_is_correct);
-  printf("\tModel logreg.testdat: passed\n");
+  printf("\tModel fixed trees logreg.testdat: passed\n");
 }
 static void run_all_model_tests() {
   printf("Testing Model 01\n");
