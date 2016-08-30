@@ -166,7 +166,7 @@ void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_chil
 }
 void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {
   Node *old_node = find_node_by_index(tree, index);
-  Node *new_node;
+  Node *new_node = NULL;
   if (delete_child_at == LEFT) {
     new_node = old_node->right_child;
     old_node->right_child = NULL;
