@@ -6,6 +6,7 @@
 #include "logictree.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #define MAX(a, b) ((a) > (b) ? a : b)
 #define MIN(a, b) ((a) < (b) ? a : b)
@@ -25,6 +26,16 @@ LTree *create_new_tree(int **data_array_list, uint max_data_index) {
   t->max_data_index = max_data_index;
   return t;
 }
+
+LTree *clone_tree(LTree *template) {
+  LTree *return_tree = create_new_tree(NULL, NULL);
+  return_tree->height = template->height;
+  return_tree->binary_outcome = template->binary_outcome;
+  return_tree->list_of_data_arrays = template->list_of_data_arrays;
+  return_tree->max_data_index = template->max_data_index;
+  return_tree->root_node = clone_node(template->root_node, NULL);
+}
+
 void destroy_tree(LTree *tree, bool include_subsequent) {
   if (tree != NULL) {
     if (tree->next_tree != NULL) {
@@ -78,6 +89,23 @@ Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp
   }
   n->data_index = data_index;
   return n;
+}
+Node *clone_node(Node *template, Node *new_parent) {
+  Node *return_node = (Node*)malloc(sizeof(Node));
+  return_node->base_tree = template->base_tree;
+  return_node->data_index = template->data_index;
+  return_node->depth = template->depth;
+  return_node->node_index = template->node_index;
+  return_node->position = template->position;
+  return_node->type = template->type;
+  if(template->left_child != NULL) {
+    return_node->left_child = clone_node(template->left_child, return_node);
+  }
+  if(template->right_child != NULL) {
+    return_node->right_child = clone_node(template->right_child, return_node);
+  }
+  return_node->parent = new_parent;
+  return return_node;
 }
 void destroy_node(Node **n) {
   if (*n != NULL) {

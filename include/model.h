@@ -19,6 +19,7 @@ struct model {
 };
 
 Model *new_model(int **data_array_list, uint data_arr_length, uint data_array_list_length);
+Model *clone_model(Model *template);
 Model *model_add_tree(Model *model1, float coefficient);
 float *calculate_model(Model *model1);
 

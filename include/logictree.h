@@ -73,8 +73,10 @@ void delete_leaf(LTree *tree, uint index);
 
 // Other tree operations
 LTree *create_new_tree(int **data_array_list, uint max_data_index);
+LTree *clone_tree(LTree *template);
 LTree *add_tree(LTree *root_tree);
 Node *create_node(Node *parent, nodeType type, uint data_index, childPosition cp);
+Node *clone_node(Node *template, Node* new_parent);
 Node *find_node_by_index(LTree *tree, uint node_index);
 void destroy_tree(LTree *tree, bool include_subsequent);
 void destroy_node(Node **node);

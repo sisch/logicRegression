@@ -19,6 +19,10 @@ Model *new_model(int **data_array_list, uint data_arr_length, uint data_array_li
   return model1;
 }
 
+Model *clone_model(Model *template) {
+
+}
+
 Model *model_add_tree(Model *model1, float coefficient) {
   model1->number_of_trees++;
   float *old_coefficients = model1->coefficient_array;
