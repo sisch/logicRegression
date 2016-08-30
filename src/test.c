@@ -59,8 +59,7 @@ int **logreg_testdata() {
   ssize_t nr_read_bytes;
   int nr_datasets = 0;
   const int NR_FEATURES = 20;
-
-  fp = fopen("../data/testdata.txt","r");
+  fp = fopen("data/testdata.txt","r");
   if(fp==NULL) {
     exit(EXIT_FAILURE);
   }
