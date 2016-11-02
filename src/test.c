@@ -441,11 +441,43 @@ static void test_fixed_model_data() {
   assert(simulation_is_correct);
   printf("\tModel fixed trees logreg.testdat: passed\n");
 }
+static void test_clone_methods() {
+  Model *test_model = new_model(logreg_testdata(),20,500);
+  test_model->coefficient_array[0] = 3.0f;
+  test_model->coefficient_array[1] = 1.0f;
+  split_leaf(test_model->first_tree,1,OR,0,INDEX);
+  alternate_leaf(test_model->first_tree,3,create_node(NULL, INDEX, 1, RIGHT));
+  model_add_tree(test_model,-2.0f);
+  split_leaf(test_model->last_tree,1,OR,2,INDEX);
+  alternate_leaf(test_model->last_tree,3,create_node(NULL, INDEX, 3, RIGHT));
+  float *simulated_outcome = calculate_model(test_model);
+  Model *cloned_model = clone_model(test_model);
+  assert(test_model->number_of_trees == cloned_model->number_of_trees);
+  assert(test_model->data_array_length == cloned_model->data_array_length);
+  assert(test_model->data_array_list_length == cloned_model->data_array_list_length);
+  assert(test_model->data_array == cloned_model->data_array);
+  printf("\tCloned model has same values as template: passed\n");
+  assert(test_model->first_tree != cloned_model->first_tree);
+  assert(test_model->last_tree != cloned_model->last_tree);
+  printf("\tCloned model pointers are different from template pointers: passed\n");
+  // change something in the cloned model and check effect on template
+  alternate_operator(cloned_model->last_tree, 1, AND);
+  assert(find_node_by_index(test_model->last_tree, 1)->type == OR);
+  printf("\tClone changed, template stays same: passed\n");
+  assert(find_node_by_index(cloned_model->last_tree, 1)->type == AND);
+  printf("\tClone changed, clone has correct value: passed\n");
+
+
+}
+
 static void run_all_model_tests() {
-  printf("Testing Model 01\n");
+  printf("01 Testing Model\n");
   test_model_creation();
-  printf("Testing Model 02\n");
+  printf("02 Testing Model\n");
   test_fixed_model_data();
+  printf("03 Testing deepcopy functions\n");
+  test_clone_methods();
+
 }
 
 /*

@@ -20,7 +20,21 @@ Model *new_model(int **data_array_list, uint data_arr_length, uint data_array_li
 }
 
 Model *clone_model(Model *template) {
-
+  Model *model_copy = (Model *) malloc(sizeof(Model));
+  model_copy->data_array_length = template->data_array_length;
+  model_copy->data_array_list_length= template->data_array_list_length;
+  model_copy->number_of_trees = template->number_of_trees;
+  model_copy->coefficient_array = (float *)malloc(sizeof(float)*model_copy->number_of_trees + 1);
+  memcpy(model_copy->coefficient_array,template->coefficient_array,sizeof(float)*model_copy->number_of_trees + 1);
+  model_copy->first_tree = clone_tree(template->first_tree);
+  LTree *currentTree = model_copy->first_tree;
+  while(currentTree->next_tree != NULL){
+    currentTree = currentTree->next_tree;
+  }
+  model_copy->last_tree = currentTree;
+  //use same data array, as it does not change
+  model_copy->data_array = template->data_array;
+  return model_copy;
 }
 
 Model *model_add_tree(Model *model1, float coefficient) {

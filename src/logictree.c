@@ -33,7 +33,12 @@ LTree *clone_tree(LTree *template) {
   return_tree->binary_outcome = template->binary_outcome;
   return_tree->list_of_data_arrays = template->list_of_data_arrays;
   return_tree->max_data_index = template->max_data_index;
+  destroy_node(&return_tree->root_node);
   return_tree->root_node = clone_node(template->root_node, NULL);
+  if(template->next_tree != NULL) {
+    return_tree->next_tree = clone_tree(template->next_tree);
+  }
+  return return_tree;
 }
 
 void destroy_tree(LTree *tree, bool include_subsequent) {
