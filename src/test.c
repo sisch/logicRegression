@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include "helpers.h"
 #include "model.h"
@@ -397,23 +398,23 @@ static void test_model_creation() {
   assert(calculate_subtree_outcome(test_model->first_tree->root_node, 0) == 1);
   printf("\tModel initial tree outcome: passed\n");
   float *result = calculate_model(test_model);
-  assert(result[0] <= 0.000000001);
+  assert(floats_are_same(result[0], 0));
   printf("\tModel all coefficients 0: passed\n");
   test_model->coefficient_array[0] = 1;
   test_model->coefficient_array[1] = 1;
   test_model->coefficient_array[2] = 1;
-  assert(calculate_model(test_model)[0] <= 2.000000001 && calculate_model(test_model)[0] >= 1.999999999);
+  assert(floats_are_same(calculate_model(test_model)[0],2.0f));
   printf("\tModel one tree all coefficients 1: passed\n");
   test_model = model_add_tree(test_model, 1.0f);
   result = calculate_model(test_model);
-  assert(result[0] <= 3.000000001 && result[0] >= 2.999999999);
+  assert(floats_are_same(result[0],3.0f));
   printf("\tModel two trees all coefficients 1: passed\n");
   test_model = new_test_model();
   test_model->coefficient_array[0] = 0.25;
   test_model->coefficient_array[1] = 0.3;
   result = calculate_model(test_model);
   float testval = result[0];
-  assert(testval > 1.0499 && testval < 1.0501);
+  assert(floats_are_same(testval, 1.05f));
   printf("\tModel two trees fractional coefficients: passed\n");
 }
 

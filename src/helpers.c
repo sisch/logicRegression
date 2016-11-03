@@ -3,8 +3,9 @@
 //
 
 #include <stdio.h>
+#include <math.h>
 #include "helpers.h"
-
+static const float EPSILON = 0.0000001;
 void print_tree(LTree *tree) {
   print_subtree(tree->root_node);
 }
@@ -23,4 +24,7 @@ void print_subtree(Node *rootNode) {
            rootNode->data_index
     );
   }
+}
+bool floats_are_same(float a, float b) {
+  return fabs(a - b) < EPSILON;
 }
