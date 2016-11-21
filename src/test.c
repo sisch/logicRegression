@@ -323,7 +323,25 @@ static void test_node_modification() {
   test_tree = default_tree();
   test_node_delete_leaf(test_tree);
 }
-
+static void test_random_node_mod() {
+  /*
+   * First Random numbers with seed 12345
+   * 383100999
+   * 858300821
+   * 357768173
+   * 455528251
+   * 133005921
+   * 116285904
+   * 591987137
+   * 102557902
+   * 689413528
+   * 585691128
+   * */
+  LTree *test_tree = default_tree();
+  rnd_tree_alteration(12345, test_tree);
+  assert(find_node_by_index(test_tree, 2)->data_index == 5);
+  printf("\t^Random^ modification: passed\n");
+}
 static void run_all_node_tests() {
   printf("Testing Node 01 :: Node creation\n");
   test_node_creation();
@@ -333,6 +351,8 @@ static void run_all_node_tests() {
   test_node_destruction();
   printf("Testing Node 04 :: Modification\n");
   test_node_modification();
+  printf("Testing Node 05 :: Random tree alteration\n");
+  test_random_node_mod();
 
 }
 
@@ -345,6 +365,9 @@ static void test_tree_struct() {
   printf("\tCreate new tree: passed\n");
   assert(sizeof(*create_new_tree(list_of_data_arrays, data_max_index)) == sizeof(LTree));
   printf("\tSize tree instance: passed\n");
+  assert(create_new_tree(list_of_data_arrays, data_max_index)->number_of_nodes == 1);
+  printf("\tSize node number: passed\n");
+
 }
 
 static void run_initial_tree_tests() {

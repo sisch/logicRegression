@@ -3,8 +3,8 @@
 
 #include <stdbool.h>
 #include <stdio.h>
-#include "logictree.h"
 #include <stdlib.h>
+#include "logictree.h"
 #include <assert.h>
 #include <string.h>
 
@@ -18,6 +18,7 @@ LTree *create_new_tree(int **data_array_list, uint max_data_index) {
   LTree *t = malloc(sizeof(LTree));
   t->next_tree = NULL;
   t->root_node = create_node(NULL, ONE, -1, RIGHT);
+  t->number_of_nodes = 1;
   t->root_node->node_index = 1;
   t->root_node->base_tree = t;
   t->height = 1;
@@ -133,6 +134,7 @@ void destroy_node(Node **n) {
   *n = NULL;
 }
 
+//leaf functions
 void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_data_index, nodeType new_child_type) {
   Node *cur_node = find_node_by_index(tree, index);
   // At the specified node:
@@ -146,6 +148,7 @@ void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_
     tree->height = MAX(depth + 1, tree->height);
     cur_node->data_index = NULL;
     cur_node->type = new_connector;
+    tree->number_of_nodes += 2;
   }
   else {
     fprintf(stderr, "No rootnode available. Create a tree first and pass the correct pointer.");
@@ -170,6 +173,32 @@ void alternate_leaf(LTree *tree, uint index, Node *new_node) {
   }
   destroy_node(&old_node);
 }
+void delete_leaf(LTree *tree, uint index) {
+  Node *leaf_to_delete = find_node_by_index(tree, index);
+  assert(leaf_to_delete->left_child == NULL && leaf_to_delete->right_child == NULL);
+
+  Node *leaf_to_keep = NULL;
+  if (leaf_to_delete->position == RIGHT) {
+    leaf_to_keep = leaf_to_delete->parent->left_child;
+    leaf_to_delete->parent->left_child = NULL;
+  }
+  if (leaf_to_delete->position == LEFT) {
+    leaf_to_keep = leaf_to_delete->parent->right_child;
+    leaf_to_delete->parent->right_child = NULL;
+  }
+  if (leaf_to_delete->parent->position == RIGHT) {
+    leaf_to_delete->parent->parent->right_child = leaf_to_keep;
+  }
+  else if (leaf_to_delete->parent->position == LEFT) {
+    leaf_to_delete->parent->parent->left_child = leaf_to_keep;
+  }
+  leaf_to_keep->parent = leaf_to_delete->parent->parent;
+  destroy_node(&leaf_to_delete);
+  tree->number_of_nodes -= 2;
+  recalculate_indices(tree, tree->root_node, 1);
+}
+
+//parent node functions
 void alternate_operator(LTree *tree, uint index, nodeType type) {
   Node *cur_node = find_node_by_index(tree, index);
   assert(
@@ -193,7 +222,7 @@ void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_chil
   new_child->parent = new_node;
   new_node->right_child = old_node;
   old_node->parent = new_node;
-
+  tree->number_of_nodes += 2;
   recalculate_indices(tree, new_node, index);
   // TODO: traverse indices,depths of sub tree
 }
@@ -228,31 +257,11 @@ void prune_branch(LTree *tree, uint index, childPosition delete_child_at) {
     }
   }
   destroy_node(&old_node);
+  tree->number_of_nodes -= 2;
   recalculate_indices(tree, tree->root_node, 1);
 }
-void delete_leaf(LTree *tree, uint index) {
-  Node *leaf_to_delete = find_node_by_index(tree, index);
-  assert(leaf_to_delete->left_child == NULL && leaf_to_delete->right_child == NULL);
 
-  Node *leaf_to_keep = NULL;
-  if (leaf_to_delete->position == RIGHT) {
-    leaf_to_keep = leaf_to_delete->parent->left_child;
-    leaf_to_delete->parent->left_child = NULL;
-  }
-  if (leaf_to_delete->position == LEFT) {
-    leaf_to_keep = leaf_to_delete->parent->right_child;
-    leaf_to_delete->parent->right_child = NULL;
-  }
-  if (leaf_to_delete->parent->position == RIGHT) {
-    leaf_to_delete->parent->parent->right_child = leaf_to_keep;
-  }
-  else if (leaf_to_delete->parent->position == LEFT) {
-    leaf_to_delete->parent->parent->left_child = leaf_to_keep;
-  }
-  leaf_to_keep->parent = leaf_to_delete->parent->parent;
-  destroy_node(&leaf_to_delete);
-  recalculate_indices(tree, tree->root_node, 1);
-}
+
 /*
  * The following will not work, as even a function pointer expects parameters.
  * I need decorators but in C
@@ -266,13 +275,53 @@ void *rnd_split_leaf(LTree *tree){
   return split_leaf(tree, leaf->node_index, new_connector_type, random_data_index, new_leaf_type);
 }
  */
-void *rnd_delete_leaf(){}
+void *rnd_delete_leaf(){
+  void (*returnFunction) = NULL;
+  return returnFunction;
+}
 void *rnd_alternate_operator(){}
 void *rnd_grow_branch(){}
 void *rnd_prune_branch(){}
 void *rnd_alternate_leaf(){}
 
-void *rnd_tree_alteration(){}
+void * rnd_tree_alteration(uint seed, LTree *tree){
+  void (*returnFunction)(LTree* _tree, uint node_index) = NULL;
+  srand(seed);
+  uint rnd_node = (rand() % tree->number_of_nodes) + 1;
+  Node* node_to_modify = find_node_by_index(tree, rnd_node);
+  int rnd_func = rand() % 3;
+  switch (rnd_func) {
+    case 0: {
+      if (node_to_modify->type == AND || node_to_modify->type == OR) {
+        // This is an operator node
+        alternate_operator(tree,
+                           node_to_modify->node_index,
+                           node_to_modify->type==AND?OR:AND);
+        // TODO: return opposite function somehow
+        } else {
+        //This is a leaf node
+        // split leaf
+      }
+
+    }
+      break;
+    case 1:
+      break;
+    case 2: {
+      if (node_to_modify->type == AND || node_to_modify->type == OR) {
+        // This is an operator node
+        prune_branch(tree, node_to_modify->node_index, (rand()%2)==0?LEFT:RIGHT);
+      } else {
+
+      }
+    }
+      break;
+
+    default:
+      break;
+  }
+  return returnFunction;
+}
 
 Node *find_node_by_index(LTree *tree, uint node_index) {
   uint current_bit_mask = 1;

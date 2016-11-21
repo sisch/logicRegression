@@ -55,6 +55,7 @@ struct logicTree {
   int binary_outcome;
   int **list_of_data_arrays;
   uint max_data_index;
+  uint number_of_nodes;
 };
 
 // Allowed set of moves to alter a tree
@@ -66,7 +67,7 @@ struct logicTree {
  */
 void split_leaf(LTree *tree, uint index, nodeType new_connector, uint new_child_data_index, nodeType new_child_type);
 void alternate_leaf
-    (LTree *tree, uint index, Node *new_node); // 3rd parameter could also be a new value of dataIndex only
+    (LTree *tree, uint index, Node *new_node); // Feature: 3rd parameter could also be a new value of dataIndex only
 void alternate_operator(LTree *tree, uint index, nodeType type);
 void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child);
 void prune_branch(LTree *tree, uint index, childPosition delete_child_at);
@@ -82,7 +83,7 @@ void *rnd_grow_branch();
 void *rnd_prune_branch();
 void *rnd_alternate_leaf();
 
-void *rnd_tree_alteration();
+void *rnd_tree_alteration(uint, LTree*);
 
 // Other tree operations
 LTree *create_new_tree(int **data_array_list, uint max_data_index);
