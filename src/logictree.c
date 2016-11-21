@@ -253,6 +253,26 @@ void delete_leaf(LTree *tree, uint index) {
   destroy_node(&leaf_to_delete);
   recalculate_indices(tree, tree->root_node, 1);
 }
+/*
+ * The following will not work, as even a function pointer expects parameters.
+ * I need decorators but in C
+ * Or I don't need decorators and am confused instead
+void *rnd_split_leaf(LTree *tree){
+  // find random leaf
+  Node *leaf = NULL;
+  nodeType new_connector_type = NULL;
+  uint random_data_index = 0;
+  nodeType new_leaf_type = NULL;
+  return split_leaf(tree, leaf->node_index, new_connector_type, random_data_index, new_leaf_type);
+}
+ */
+void *rnd_delete_leaf(){}
+void *rnd_alternate_operator(){}
+void *rnd_grow_branch(){}
+void *rnd_prune_branch(){}
+void *rnd_alternate_leaf(){}
+
+void *rnd_tree_alteration(){}
 
 Node *find_node_by_index(LTree *tree, uint node_index) {
   uint current_bit_mask = 1;

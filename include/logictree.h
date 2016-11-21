@@ -3,6 +3,7 @@
 /** @file */
 #include <zconf.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #ifndef LOGICREGRESSION_LOGICTREE_H
 #define LOGICREGRESSION_LOGICTREE_H
@@ -70,6 +71,18 @@ void alternate_operator(LTree *tree, uint index, nodeType type);
 void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_child);
 void prune_branch(LTree *tree, uint index, childPosition delete_child_at);
 void delete_leaf(LTree *tree, uint index);
+
+/*
+ * Random tree alteration functions prefix rnd_
+ */
+void *rnd_split_leaf(LTree*);
+void *rnd_delete_leaf();
+void *rnd_alternate_operator();
+void *rnd_grow_branch();
+void *rnd_prune_branch();
+void *rnd_alternate_leaf();
+
+void *rnd_tree_alteration();
 
 // Other tree operations
 LTree *create_new_tree(int **data_array_list, uint max_data_index);
