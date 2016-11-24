@@ -275,44 +275,87 @@ void *rnd_split_leaf(LTree *tree){
   return split_leaf(tree, leaf->node_index, new_connector_type, random_data_index, new_leaf_type);
 }
  */
-void *rnd_delete_leaf(){
-  void (*returnFunction) = NULL;
-  return returnFunction;
+nodeType random_leaf_type() {
+  int rnd = (rand() % 3);
+  if(rnd == 0) {
+    return INDEX;
+  } else if (rnd == 1) {
+    return INDEX_COMPLEMENT;
+  }
+  return ONE;
 }
+nodeType random_operator_type() {
+  int rnd = rand() % 2;
+  return (rnd==0 ? AND : OR);
+}
+
+void *rnd_delete_leaf(){ }
 void *rnd_alternate_operator(){}
 void *rnd_grow_branch(){}
 void *rnd_prune_branch(){}
 void *rnd_alternate_leaf(){}
 
-void * rnd_tree_alteration(uint seed, LTree *tree){
-  void (*returnFunction)(LTree* _tree, uint node_index) = NULL;
+void rnd_tree_alteration(uint seed, LTree *tree) {
+  // select random node and apply random allowed alteration
+  // TODO: prune_branch is ONLY allowed on the parent of a leaf child
+  
   srand(seed);
-  uint rnd_node = (rand() % tree->number_of_nodes) + 1;
-  Node* node_to_modify = find_node_by_index(tree, rnd_node);
+  Node *node_to_modify = NULL;
+  while (node_to_modify == NULL) {
+    uint rnd_node = (rand() % tree->number_of_nodes) + 1;
+    node_to_modify = find_node_by_index(tree, rnd_node);
+    // TODO: find_node_by_index is wrong. Traverse tree instead for rnd_node iterations
+    // for now throwing dice will work
+  }
+  bool is_operator = node_to_modify->type == AND || node_to_modify->type == OR;
   int rnd_func = rand() % 3;
   switch (rnd_func) {
     case 0: {
-      if (node_to_modify->type == AND || node_to_modify->type == OR) {
+      if (is_operator) {
         // This is an operator node
         alternate_operator(tree,
                            node_to_modify->node_index,
                            node_to_modify->type==AND?OR:AND);
-        // TODO: return opposite function somehow
         } else {
         //This is a leaf node
-        // split leaf
+        alternate_leaf(
+            tree,
+            node_to_modify->node_index,
+            create_node(node_to_modify->parent,
+                random_leaf_type(),
+                node_to_modify->node_index,
+                node_to_modify->position
+            )
+        );
       }
 
     }
       break;
-    case 1:
+    case 1: {
+      if (is_operator) {
+        //grow branch
+        grow_branch(
+            tree,
+            node_to_modify->node_index,
+            random_operator_type(),
+            create_node(
+                NULL,
+                random_leaf_type(),
+                -1,
+                NULL
+            )
+        );
+      } else {
+        // split_leaf
+      }
+    }
       break;
     case 2: {
-      if (node_to_modify->type == AND || node_to_modify->type == OR) {
+      if (is_operator) {
         // This is an operator node
         prune_branch(tree, node_to_modify->node_index, (rand()%2)==0?LEFT:RIGHT);
       } else {
-
+        // delete_leaf
       }
     }
       break;
@@ -320,7 +363,6 @@ void * rnd_tree_alteration(uint seed, LTree *tree){
     default:
       break;
   }
-  return returnFunction;
 }
 
 Node *find_node_by_index(LTree *tree, uint node_index) {
@@ -351,6 +393,26 @@ Node *find_node_by_index(LTree *tree, uint node_index) {
   }
   return current_node;
 }
+
+/* Does not quite work yet
+Node *inorderTraversal(Node *root, int n) {
+  int count = 1;
+  if(root==NULL) return NULL;
+  Node *cur_node = root;
+  while (count < n) {
+    if(cur_node->left_child != NULL) {
+      count++;
+      cur_node = cur_node->left_child;
+    } else if (cur_node->right_child != NULL) {
+      count++;
+      cur_node = cur_node->right_child;
+    } else {
+      cur_node = cur_node->parent->right_child;
+    }
+  }
+  return cur_node;
+}
+*/
 void recalculate_indices(LTree *tree, Node *root_node, uint index_of_root) {
   if (root_node != NULL) {
     root_node->node_index = index_of_root;
