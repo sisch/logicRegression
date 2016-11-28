@@ -83,7 +83,7 @@ void *rnd_grow_branch();
 void *rnd_prune_branch();
 void *rnd_alternate_leaf();
 
-void rnd_tree_alteration(uint, LTree*);
+void rnd_tree_alteration(LTree*);
 
 // Other tree operations
 LTree *create_new_tree(int **data_array_list, uint max_data_index);

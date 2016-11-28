@@ -326,10 +326,12 @@ static void test_node_modification() {
 static void test_random_node_mod() {
   // Test deactivated due to rand() behavior
   LTree *test_tree = default_tree();
-  rnd_tree_alteration(12345, test_tree);
+  srand(12345);
+  rnd_tree_alteration(test_tree);
   print_tree(test_tree);
   printf("\n");
-  rnd_tree_alteration(12344, test_tree);
+  srand(12344);
+  rnd_tree_alteration(test_tree);
   print_tree(test_tree);
   printf("\t^Random^ modification: passed\n");
 

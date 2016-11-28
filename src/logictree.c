@@ -213,9 +213,16 @@ void grow_branch(LTree *tree, uint index, nodeType new_connector, Node *new_chil
   Node *new_node = create_node(old_node->parent, new_connector, -1, old_node->position);
   old_node->position = RIGHT;
   new_child->position = LEFT;
-  new_node->node_index = new_node->parent->node_index * 2 + 1;
+  new_node->base_tree = old_node->base_tree;
+  if(new_node->parent == NULL) {
+    new_node->node_index = 1;
+    new_node->depth = 1;
+    new_node->base_tree->root_node = new_node;
+  } else {
+    new_node->node_index = new_node->parent->node_index * 2 + 1;
+    new_node->depth = new_node->parent->depth + 1;
+  }
   new_child->node_index = new_node->node_index * 2;
-  new_node->depth = new_node->parent->depth + 1;
   new_child->depth = new_node->depth + 1;
   old_node->depth = new_node->depth + 1;
   new_node->left_child = new_child;
@@ -284,6 +291,10 @@ nodeType random_leaf_type() {
   }
   return ONE;
 }
+uint random_data_index(LTree* tree) {
+  return (rand() % tree->max_data_index + 1);
+
+}
 nodeType random_operator_type() {
   int rnd = rand() % 2;
   return (rnd==0 ? AND : OR);
@@ -295,11 +306,9 @@ void *rnd_grow_branch(){}
 void *rnd_prune_branch(){}
 void *rnd_alternate_leaf(){}
 
-void rnd_tree_alteration(uint seed, LTree *tree) {
+void rnd_tree_alteration(LTree *tree) {
   // select random node and apply random allowed alteration
   // TODO: prune_branch is ONLY allowed on the parent of a leaf child
-  
-  srand(seed);
   Node *node_to_modify = NULL;
   while (node_to_modify == NULL) {
     uint rnd_node = (rand() % tree->number_of_nodes) + 1;
@@ -308,7 +317,19 @@ void rnd_tree_alteration(uint seed, LTree *tree) {
     // for now throwing dice will work
   }
   bool is_operator = node_to_modify->type == AND || node_to_modify->type == OR;
-  int rnd_func = rand() % 3;
+  int rnd_func;
+  if(     is_operator
+      &&
+          (node_to_modify->right_child->type == AND ||
+          node_to_modify->right_child->type == OR)
+      &&
+          (node_to_modify->left_child->type == AND ||
+          node_to_modify->left_child->type == OR)
+      ) {
+    rnd_func = rand() % 2;
+  } else {
+   rnd_func = rand() % 3;
+  }
   switch (rnd_func) {
     case 0: {
       if (is_operator) {
@@ -341,7 +362,7 @@ void rnd_tree_alteration(uint seed, LTree *tree) {
             create_node(
                 NULL,
                 random_leaf_type(),
-                -1,
+                random_data_index(tree),
                 NULL
             )
         );
@@ -353,7 +374,13 @@ void rnd_tree_alteration(uint seed, LTree *tree) {
     case 2: {
       if (is_operator) {
         // This is an operator node
-        prune_branch(tree, node_to_modify->node_index, (rand()%2)==0?LEFT:RIGHT);
+        if(node_to_modify->left_child->type==AND || node_to_modify->left_child->type==OR) {
+          prune_branch(tree, node_to_modify->node_index,RIGHT);
+        } else if(node_to_modify->right_child->type==AND || node_to_modify->right_child->type==OR) {
+          prune_branch(tree, node_to_modify->node_index,LEFT);
+        } else {
+          prune_branch(tree, node_to_modify->node_index, (rand() % 2) == 0 ? LEFT : RIGHT);
+        }
       } else {
         // delete_leaf
       }

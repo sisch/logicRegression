@@ -15,7 +15,7 @@ void print_subtree(Node *rootNode) {
       print_subtree(rootNode->right_child);
     if (rootNode->left_child != NULL)
       print_subtree(rootNode->left_child);
-    printf("%d(%d):l %p, r %p, %d => %d\n",
+    printf("%d(%d)\tl %p\tr %p\t%d\t%d\n",
            rootNode->node_index,
            rootNode->type,
            rootNode->left_child,
