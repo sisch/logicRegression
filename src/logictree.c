@@ -342,7 +342,7 @@ void rnd_tree_alteration(LTree *tree) {
         alternate_leaf(
             tree,
             node_to_modify->node_index,
-            create_node(node_to_modify->parent,
+            create_node(NULL,
                 random_leaf_type(),
                 node_to_modify->node_index,
                 node_to_modify->position
@@ -368,6 +368,12 @@ void rnd_tree_alteration(LTree *tree) {
         );
       } else {
         // split_leaf
+        split_leaf(tree,
+                   node_to_modify->node_index,
+                   (rand()%2)==0?AND:OR,
+                   random_data_index(tree),
+                   random_leaf_type()
+        );
       }
     }
       break;
@@ -383,6 +389,7 @@ void rnd_tree_alteration(LTree *tree) {
         }
       } else {
         // delete_leaf
+        delete_leaf(tree, node_to_modify->node_index);
       }
     }
       break;
