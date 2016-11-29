@@ -12,11 +12,13 @@
 
 int *data_array;
 int **list_of_data_arrays;
+float *resp_array;
 uint data_array_length = 6;
 uint data_max_index = 5;
+uint number_of_datasets = 2;
 
 static void initialize() {
-  list_of_data_arrays = malloc(sizeof(int*)*2);
+  list_of_data_arrays = malloc(sizeof(int*)*number_of_datasets);
   data_array = malloc(sizeof(int) * data_array_length);
   data_array[0] = 1;
   data_array[2] = 1;
@@ -35,6 +37,10 @@ static void initialize() {
   data_array[5] = 1;
   list_of_data_arrays[1] = data_array;
 
+  //response variable
+  resp_array = malloc(sizeof(float)*number_of_datasets);
+  resp_array[0] = 1.5f;
+  resp_array[1] = 0;
 }
 LTree *default_tree() {
   LTree *new_tree = create_new_tree(list_of_data_arrays, data_max_index);
@@ -45,7 +51,7 @@ LTree *default_tree() {
 }
 
 Model *new_test_model() {
-  Model *model1 = new_model(list_of_data_arrays, data_array_length, 2);
+  Model *model1 = new_model(list_of_data_arrays, data_array_length, 2, resp_array);
   model_add_tree(model1, 0.5f);
   split_leaf(model1->last_tree, 1, OR, -1, ONE);
   split_leaf(model1->last_tree, 2, AND, 5, INDEX);
@@ -401,10 +407,10 @@ static void run_all_tree_tests() {
 }
 
 static void test_model_creation() {
-  Model *test_model = new_model(list_of_data_arrays, 6, 2);
+  Model *test_model = new_model(list_of_data_arrays, 6, 2, resp_array);
   assert(test_model != NULL);
   printf("\tModel creation: passed\n");
-  assert(sizeof(*test_model) == 48);
+  assert(sizeof(*test_model) == 56);
   printf("\tModel allocated memory: passed\n");
   assert(test_model->first_tree != NULL);
   printf("\tModel initial tree creation: passed\n");
@@ -412,29 +418,30 @@ static void test_model_creation() {
   printf("\tModel initial tree creation: passed\n");
   assert(calculate_subtree_outcome(test_model->first_tree->root_node, 0) == 1);
   printf("\tModel initial tree outcome: passed\n");
-  float *result = calculate_model(test_model);
-  assert(floats_are_same(result[0], 0));
+  calculate_coefficients(test_model);
+  float result = calculate_outcome(test_model)[0];
+  assert(floats_are_same(result, 0));
   printf("\tModel all coefficients 0: passed\n");
   test_model->coefficient_array[0] = 1;
   test_model->coefficient_array[1] = 1;
   test_model->coefficient_array[2] = 1;
-  assert(floats_are_same(calculate_model(test_model)[0],2.0f));
+  result = calculate_outcome(test_model)[0];
+  assert(floats_are_same(result,2.0f));
   printf("\tModel one tree all coefficients 1: passed\n");
   test_model = model_add_tree(test_model, 1.0f);
-  result = calculate_model(test_model);
-  assert(floats_are_same(result[0],3.0f));
+  result = calculate_outcome(test_model)[0];
+  assert(floats_are_same(result,3.0f));
   printf("\tModel two trees all coefficients 1: passed\n");
   test_model = new_test_model();
   test_model->coefficient_array[0] = 0.25;
   test_model->coefficient_array[1] = 0.3;
-  result = calculate_model(test_model);
-  float testval = result[0];
-  assert(floats_are_same(testval, 1.05f));
+  result = calculate_outcome(test_model)[0];
+  assert(floats_are_same(result, 1.05f));
   printf("\tModel two trees fractional coefficients: passed\n");
 }
 
 static void test_fixed_model_data() {
-  Model *test_model = new_model(logreg_testdata(),20,500);
+  Model *test_model = new_model(logreg_testdata(),20,500, resp_array);
   test_model->coefficient_array[0] = 3.0f;
   test_model->coefficient_array[1] = 1.0f;
   split_leaf(test_model->first_tree,1,OR,0,INDEX);
@@ -442,7 +449,7 @@ static void test_fixed_model_data() {
   model_add_tree(test_model,-2.0f);
   split_leaf(test_model->last_tree,1,OR,2,INDEX);
   alternate_leaf(test_model->last_tree,3,create_node(NULL, INDEX, 3, RIGHT));
-  float *simulated_outcome = calculate_model(test_model);
+  float *simulated_outcome = calculate_outcome(test_model);
   bool simulation_is_correct = true;
   simulation_is_correct = simulation_is_correct && simulated_outcome[0] == 3;
   simulation_is_correct = simulation_is_correct && simulated_outcome[1] == 4;
@@ -458,7 +465,7 @@ static void test_fixed_model_data() {
   printf("\tModel fixed trees logreg.testdat: passed\n");
 }
 static void test_clone_methods() {
-  Model *test_model = new_model(logreg_testdata(),20,500);
+  Model *test_model = new_model(logreg_testdata(),20,500, resp_array);
   test_model->coefficient_array[0] = 3.0f;
   test_model->coefficient_array[1] = 1.0f;
   split_leaf(test_model->first_tree,1,OR,0,INDEX);
@@ -466,7 +473,7 @@ static void test_clone_methods() {
   model_add_tree(test_model,-2.0f);
   split_leaf(test_model->last_tree,1,OR,2,INDEX);
   alternate_leaf(test_model->last_tree,3,create_node(NULL, INDEX, 3, RIGHT));
-  float *simulated_outcome = calculate_model(test_model);
+  float *simulated_outcome = calculate_outcome(test_model);
   Model *cloned_model = clone_model(test_model);
   assert(test_model->number_of_trees == cloned_model->number_of_trees);
   assert(test_model->data_array_length == cloned_model->data_array_length);

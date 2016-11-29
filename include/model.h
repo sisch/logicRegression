@@ -14,13 +14,15 @@ struct model {
   LTree *last_tree;
   float *coefficient_array;
   int **data_array;
+  float *response_array;
   uint data_array_length;
   uint data_array_list_length;
 };
 
-Model *new_model(int **data_array_list, uint data_arr_length, uint data_array_list_length);
+Model *new_model(int **data_array_list, uint data_arr_length, uint data_array_list_length, float *resp_array);
 Model *clone_model(Model *template);
 Model *model_add_tree(Model *model1, float coefficient);
-float *calculate_model(Model *model1);
-
+void calculate_coefficients(Model *model1);
+float *calculate_outcome(Model *model1);
+float score(Model *model1);
 #endif //LOGICREGRESSION_MODEL_H

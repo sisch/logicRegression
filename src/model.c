@@ -6,7 +6,7 @@
 #include <string.h>
 #include "model.h"
 
-Model *new_model(int **data_array_list, uint data_arr_length, uint data_array_list_length) {
+Model *new_model(int **data_array_list, uint data_arr_length, uint data_array_list_length, float *resp_array) {
   Model *model1 = (Model *) malloc(sizeof(Model));
   model1->first_tree = create_new_tree(data_array_list, data_arr_length - 1);
   model1->last_tree = model1->first_tree;
@@ -16,6 +16,7 @@ Model *new_model(int **data_array_list, uint data_arr_length, uint data_array_li
   model1->data_array = data_array_list;
   model1->data_array_length = data_arr_length;
   model1->data_array_list_length = data_array_list_length;
+  model1->response_array = resp_array;
   return model1;
 }
 
@@ -50,12 +51,17 @@ Model *model_add_tree(Model *model1, float coefficient) {
   return model1;
 }
 
-float *calculate_model(Model *model1) {
+void calculate_coefficients(Model *model1) {
+  //TODO: call GSL or MESCHACH or BLAS functions to calculate betas with Moore-Penrose-approach
+}
+
+float *calculate_outcome(Model *model1) {
   float *result = malloc(sizeof(float) * model1->data_array_list_length);
   for(int i = 0; i<model1->data_array_list_length;i++) {
     result[i] = model1->coefficient_array[0];
   }
   for(uint dataset_id=0;dataset_id<model1->data_array_list_length;dataset_id++) {
+    //TODO: find out why this loops. result should just be Coeff*Outcomes
     LTree *cur_tree = model1->first_tree;
     int tree_num = 1;
     while (tree_num <= model1->number_of_trees) {
@@ -69,3 +75,12 @@ float *calculate_model(Model *model1) {
   return result;
 }
 
+float score(Model *model1) {
+  float sum_of_squared_errors = 0;
+  float *result = calculate_outcome(model1);
+  for (int i = 0; i < model1->data_array_length; i++) {
+    float difference = model1->response_array[i] - result[i];
+    sum_of_squared_errors += (difference*difference);
+  }
+  return sum_of_squared_errors;
+}
