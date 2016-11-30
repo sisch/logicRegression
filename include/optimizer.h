@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "model.h"
 #include <math.h>
+#include <time.h>
 #ifndef LOGICREGRESSION_OPTIMIZER_H
 #define LOGICREGRESSION_OPTIMIZER_H
 

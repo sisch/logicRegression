@@ -26,4 +26,5 @@ void calculate_coefficients(Model *model1);
 float *calculate_outcome(Model *model1);
 float score(Model *model1);
 void free_model(Model *model1);
+void rnd_model_alteration(Model *model1);
 #endif //LOGICREGRESSION_MODEL_H

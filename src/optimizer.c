@@ -36,6 +36,7 @@ void simulated_annealing_initialize(int **data_array_list,
   end_temperature = min_temperature;
   // cooling rate is transformed to a temperature decay rate
   cooling_rate = 1 - coolingrate;
+  srand(time(NULL));
 }
 
 Model *start_annealing() {
@@ -66,7 +67,9 @@ Solution *clone_solution(Solution *sol) {
 }
 
 void modify_solution(Solution *sol) {
-
+  //This is called after cloning solution.
+  // So overwriting values downstream should be no problem.
+  rnd_model_alteration(sol->model);
 }
 
 bool accept(float new_energy, float old_energy, float temperature) {

@@ -53,6 +53,7 @@ Model *model_add_tree(Model *model1, float coefficient) {
 
 void calculate_coefficients(Model *model1) {
   //TODO: call GSL or MESCHACH or BLAS functions to calculate betas with Moore-Penrose-approach
+  
 }
 
 float *calculate_outcome(Model *model1) {
@@ -61,7 +62,6 @@ float *calculate_outcome(Model *model1) {
     result[i] = model1->coefficient_array[0];
   }
   for(uint dataset_id=0;dataset_id<model1->data_array_list_length;dataset_id++) {
-    //TODO: find out why this loops. result should just be Coeff*Outcomes
     LTree *cur_tree = model1->first_tree;
     int tree_num = 1;
     while (tree_num <= model1->number_of_trees) {
@@ -77,6 +77,7 @@ float *calculate_outcome(Model *model1) {
 
 float score(Model *model1) {
   float sum_of_squared_errors = 0;
+  calculate_coefficients(model1);
   float *result = calculate_outcome(model1);
   for (int i = 0; i < model1->data_array_length; i++) {
     float difference = model1->response_array[i] - result[i];
@@ -90,5 +91,12 @@ void free_model(Model *model1) {
   free(model1->first_tree);
   free(model1->last_tree);
   free(model1);
+}
 
+void rnd_model_alteration(Model *model1) {
+  LTree *cur_tree = model1->first_tree;
+  while(cur_tree != NULL) {
+    rnd_tree_alteration(cur_tree);
+    cur_tree = cur_tree->next_tree;
+  }
 }
