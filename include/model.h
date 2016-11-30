@@ -25,4 +25,5 @@ Model *model_add_tree(Model *model1, float coefficient);
 void calculate_coefficients(Model *model1);
 float *calculate_outcome(Model *model1);
 float score(Model *model1);
+void free_model(Model *model1);
 #endif //LOGICREGRESSION_MODEL_H

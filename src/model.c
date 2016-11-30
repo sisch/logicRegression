@@ -84,3 +84,11 @@ float score(Model *model1) {
   }
   return sum_of_squared_errors;
 }
+void free_model(Model *model1) {
+  destroy_tree(model1->first_tree, true);
+  free(model1->coefficient_array);
+  free(model1->first_tree);
+  free(model1->last_tree);
+  free(model1);
+
+}
