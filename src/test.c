@@ -517,4 +517,6 @@ int main() {
 
   run_all_model_tests();
   printf("\n");
+  printf("\n");
+  calculate_coefficients(new_test_model());
 }

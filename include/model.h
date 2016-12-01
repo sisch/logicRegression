@@ -2,10 +2,14 @@
 // Created by schliesky on 2/17/16.
 //
 
+
+#include "logictree.h"
+#include <cblas.h>
+
 #ifndef LOGICREGRESSION_MODEL_H
 #define LOGICREGRESSION_MODEL_H
 
-#include "logictree.h"
+
 
 typedef struct model Model;
 struct model {

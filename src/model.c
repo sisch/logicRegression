@@ -57,7 +57,37 @@ void calculate_coefficients(Model *model1) {
   // M = (X^T*X)^-1 * X^T
   // betas for least squares
   // beta = M * y
-
+  int number_of_rows_A = 2;
+  int number_of_columns_B = 2;
+  int number_of_colA_rowB = 3;
+  float scalar_alpha = 1.0;
+  float scalar_beta = 0;
+  // matrixA = array of tree_outcomes(x_i).
+  float *matrixA = (float*)malloc(sizeof(float)*number_of_rows_A*number_of_colA_rowB);
+  float *matrixC_output = malloc(number_of_rows_A*number_of_columns_B*sizeof(float));
+  matrixC_output[0] = 0;
+  matrixC_output[1] = 0;
+  matrixC_output[2] = 0;
+  matrixC_output[3] = 0;
+  // sgemm: C := alpha*A*B+beta*C
+  cblas_sgemm(CblasRowMajor,
+              CblasNoTrans,
+              CblasTrans,
+              number_of_rows_A,
+              number_of_columns_B,
+              number_of_colA_rowB,
+              scalar_alpha,
+              matrixA,
+              number_of_colA_rowB,
+              matrixA,
+              number_of_colA_rowB,
+              scalar_beta,
+              matrixC_output,
+              number_of_rows_A
+  );
+  for(int i = 0; i< number_of_rows_A*number_of_columns_B; i++) {
+    printf("%.2f\t", matrixC_output[i]);
+  }
   //TODO: call GSL or MESCHACH or BLAS functions to calculate betas with Moore-Penrose-approach
   
 }
