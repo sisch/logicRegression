@@ -52,6 +52,12 @@ Model *model_add_tree(Model *model1, float coefficient) {
 }
 
 void calculate_coefficients(Model *model1) {
+  // Moore Penrose Pseudoinverse
+  // X_ij = L_j(x_i)
+  // M = (X^T*X)^-1 * X^T
+  // betas for least squares
+  // beta = M * y
+
   //TODO: call GSL or MESCHACH or BLAS functions to calculate betas with Moore-Penrose-approach
   
 }
