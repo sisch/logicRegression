@@ -67,7 +67,7 @@ Solution *clone_solution(Solution *sol) {
 }
 
 void modify_solution(Solution *sol) {
-  //This is called after cloning solution.
+  //This is only called after cloning solution.
   // So overwriting values downstream should be no problem.
   rnd_model_alteration(sol->model);
 }

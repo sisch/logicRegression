@@ -5,6 +5,7 @@
 
 #include "logictree.h"
 #include <cblas.h>
+#include <lapacke.h>
 
 #ifndef LOGICREGRESSION_MODEL_H
 #define LOGICREGRESSION_MODEL_H

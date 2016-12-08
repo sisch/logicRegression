@@ -64,12 +64,14 @@ void calculate_coefficients(Model *model1) {
   float scalar_beta = 0;
   // matrixA = array of tree_outcomes(x_i).
   float *matrixA = (float*)malloc(sizeof(float)*number_of_rows_A*number_of_colA_rowB);
+
   float *matrixC_output = malloc(number_of_rows_A*number_of_columns_B*sizeof(float));
   matrixC_output[0] = 0;
   matrixC_output[1] = 0;
   matrixC_output[2] = 0;
   matrixC_output[3] = 0;
   // sgemm: C := alpha*A*B+beta*C
+  // (X^*X)
   cblas_sgemm(CblasRowMajor,
               CblasNoTrans,
               CblasTrans,
@@ -85,6 +87,52 @@ void calculate_coefficients(Model *model1) {
               matrixC_output,
               number_of_rows_A
   );
+  // Invert MatrixC
+  int *ipiv= malloc(sizeof(int)*number_of_colA_rowB);
+  LAPACKE_sgetrf(LAPACK_ROW_MAJOR,
+                 number_of_colA_rowB,
+                 number_of_colA_rowB,
+                 matrixC_output,
+                 number_of_colA_rowB,
+                 ipiv);
+  LAPACKE_sgetri(LAPACK_ROW_MAJOR,
+                number_of_colA_rowB,
+                matrixC_output,
+                number_of_colA_rowB,
+                ipiv);
+  free(ipiv);
+  // multiply by X^T =: MatrixA
+  float *matrixM = malloc(sizeof(float)*number_of_colA_rowB*number_of_colA_rowB);
+  cblas_sgemm(CblasRowMajor,
+              CblasNoTrans,
+              CblasNoTrans,
+              number_of_colA_rowB,
+              number_of_colA_rowB,
+              number_of_colA_rowB,
+              scalar_alpha,
+              matrixC_output,
+              number_of_colA_rowB,
+              matrixA,
+              number_of_colA_rowB,
+              scalar_beta,
+              matrixM,
+              number_of_rows_A // check again what this does
+  );
+  // Now the vector of betas = M*y
+  float *betas = malloc(sizeof(float)*number_of_colA_rowB);
+  cblas_sgemv(CblasRowMajor,
+              CblasNoTrans,
+              number_of_colA_rowB,
+              number_of_colA_rowB,
+              1.0,
+              matrixM,
+              number_of_colA_rowB,
+              model1->response_array,
+              1,
+              1.0,
+              betas,
+              1);
+
   for(int i = 0; i< number_of_rows_A*number_of_columns_B; i++) {
     printf("%.2f\t", matrixC_output[i]);
   }
